@@ -49,7 +49,7 @@ int main() {
             string cur_path = d;
             cur_path.push_back('/');
             cur_path += arg;
-            if(access(cur_path.c_str, X_OK)==0){
+            if(access(cur_path.c_str(), X_OK)==0){
               chk = true;
               cout << arg <<" is "<< cur_path<<"\n";
               break;
