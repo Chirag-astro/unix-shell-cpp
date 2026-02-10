@@ -16,6 +16,7 @@ int main() {
     std::cout << "$ ";
     
     getline(cin, command);
+    if(command.empty())continue;
     if(command == "exit"){
       break;
     }else if( command.length() >= 5 && command.substr(0,4) == "echo" && command[4] == ' '){
