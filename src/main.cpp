@@ -11,9 +11,12 @@ int main() {
   string command;
 
   while(true){
-  std::cout << "$ ";
-  
-  getline(cin, command);
-  cout << command<<": command not found\n";
+    std::cout << "$ ";
+    
+    getline(cin, command);
+    if(command == "exit"){
+      break;
+    }
+    cout << command<<": command not found\n";
   }
 }
