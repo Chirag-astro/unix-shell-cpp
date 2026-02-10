@@ -1,6 +1,10 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <unordered_set>
+#include <unistd.h>
+#include <vector>
+#include <cstdlib>
 using namespace std;
 
 int main() {
@@ -17,19 +21,45 @@ int main() {
     
     getline(cin, command);
     if(command.empty())continue;
-    if(command == "exit"){
+    string cmd, arg;
+    stringstream ss(command);
+    ss >> cmd >> arg;
+    if(cmd == "exit"){
       break;
-    }else if( command.length() >= 5 && command.substr(0,4) == "echo" && command[4] == ' '){
+    }else if( cmd == "echo"){
       cout << command.substr(5) <<"\n";
-    }else if( command.length() >= 5 && command.substr(0,4) == "type" && command[4] == ' '){
-       string arg = command.substr(5);
+    }else if(cmd == "type"){
        if(builtin_commands.find(arg)!= builtin_commands.end()){
           cout << arg << " is a shell builtin\n";
        }else{
+          string path  = getenv("PATH");
+          vector<string>dir;
+          string tmp;
+          for(auto c : path){
+            if(c ==':'){
+              dir.push_back(tmp);
+              tmp.clear();
+            }else{
+              tmp.push_back(c);
+            }
+          }
+          dir.push_back(tmp);
+          bool chk=false;
+          for(auto &d : dir){
+            string cur_path = d;
+            cur_path.push_back('/');
+            cur_path += arg;
+            if(access(cur_path, X_OK)==0){
+              chk = true;
+              cout << arg <<" is "<< cur_path<<"\n";
+              break;
+            }
+          }
+          if(!chk)
           cout << arg<<": not found\n";
        }
     }else{
-      cout << command<<": command not found\n";
+      cout << cmd<<": command not found\n";
     }
   }
 }
