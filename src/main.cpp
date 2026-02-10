@@ -16,7 +16,10 @@ int main() {
     getline(cin, command);
     if(command == "exit"){
       break;
+    }else if(command == "echo"){
+      cout << command <<"\n";
+    }else{
+      cout << command<<": command not found\n";
     }
-    cout << command<<": command not found\n";
   }
 }
