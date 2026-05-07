@@ -49,7 +49,7 @@ int main() {
 
   // TODO: Uncomment the code below to pass the first stage
   string command;
-  unordered_set<string>builtin_commands = {"echo", "type", "exit", "pwd"};  
+  unordered_set<string>builtin_commands = {"echo", "type", "exit", "pwd", "cd"};  
 
   while(true){
     std::cout << "$ ";
@@ -89,6 +89,13 @@ int main() {
         if(getcwd(cwd, sizeof(cwd)) != NULL){
            cout << cwd<<"\n";
         }
+    
+    }else if(args[0]=='cd'){
+      const char* dir = args[1].c_str;
+      int op = chdir(dir);
+       if(op==-1){
+        cout << "cd: " << args[1] <<": No such file or directory\n";
+       }
     
     }else{
             string pth = is_exec(args[0]);
