@@ -49,7 +49,7 @@ int main() {
 
   // TODO: Uncomment the code below to pass the first stage
   string command;
-  unordered_set<string>builtin_commands = {"echo", "type", "exit"};  
+  unordered_set<string>builtin_commands = {"echo", "type", "exit", "pwd"};  
 
   while(true){
     std::cout << "$ ";
@@ -84,6 +84,12 @@ int main() {
              cout << args[1] <<": not found\n";
            }
        }
+    }else if(args[0] == "pwd"){
+        char cwd[1024];
+        if(getcwd(cwd, sizeof(cwd)) != NULL){
+           cout << cwd<<"\n";
+        }
+    
     }else{
             string pth = is_exec(args[0]);
             vector<char*>c_args;
