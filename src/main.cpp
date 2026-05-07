@@ -73,7 +73,7 @@ int main() {
       break;
     }else if( args[0] == "echo"){
       cout << command.substr(5) <<"\n";
-    }else if(cmd == "type"){
+    }else if(args[0] == "type"){
        if(builtin_commands.find(args[1])!= builtin_commands.end()){
           cout << args[1] << " is a shell builtin\n";
        }else{
