@@ -90,7 +90,7 @@ int main() {
            cout << cwd<<"\n";
         }
     
-    }else if(args[0]=='cd'){
+    }else if(args[0]=="cd"){
       const char* dir = args[1].c_str;
       int op = chdir(dir);
        if(op==-1){
