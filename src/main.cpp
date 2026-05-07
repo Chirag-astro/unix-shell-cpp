@@ -31,6 +31,7 @@ string is_exec(string cmd){
 
     for(auto &d : directories){
       string cur_pth = d;
+      cur_pth.push_back('/');
       cur_pth += cmd;
       if(access(cur_pth.c_str(), X_OK) == 0){
           return cur_pth;
