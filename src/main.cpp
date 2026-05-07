@@ -106,7 +106,7 @@ int main() {
 
                 
            }else{
-              cout << cmd<<": command not found\n";
+              cout << args[0]<<": command not found\n";
 
            }
 
