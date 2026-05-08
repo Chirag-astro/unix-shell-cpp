@@ -90,6 +90,7 @@ int main() {
     if(args[0] == "exit"){
       break;
     }else if( args[0] == "echo"){
+      cout << args.size()<<"\n";
         for (int i = 1; i < args.size(); i++)
         {
            cout << args[i] <<" ";
