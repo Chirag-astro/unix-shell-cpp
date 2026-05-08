@@ -91,11 +91,20 @@ int main() {
         }
     
     }else if(args[0]=="cd"){
+      if(args[1] == "~"){
+        string home  = getenv("HOME");
+        int op = chdir(home.c_str());
+        if(op==-1){
+        cout << "cd: " << args[1] <<": No such file or directory\n";
+            }
+        
+      }else{
       const char* dir = args[1].c_str();
       int op = chdir(dir);
        if(op==-1){
         cout << "cd: " << args[1] <<": No such file or directory\n";
        }
+      }
     
     }else{
             string pth = is_exec(args[0]);
