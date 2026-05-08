@@ -90,7 +90,12 @@ int main() {
     if(args[0] == "exit"){
       break;
     }else if( args[0] == "echo"){
-      cout << command.substr(5) <<"\n";
+        for (int i = 1; i < args.size(); i++)
+        {
+           cout << args[i] <<" ";
+        }
+        cout<<"\n";
+        
     }else if(args[0] == "type"){
        if(builtin_commands.find(args[1])!= builtin_commands.end()){
           cout << args[1] << " is a shell builtin\n";
