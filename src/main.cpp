@@ -54,6 +54,11 @@ vector<string>tokenize( string &command){
       if(command[i] != '\'' && squotes){
          tmp.push_back(command[i]);
       }else if(command[i] != '"' && dquotes){
+            if(i+1 < command.size() && (command[i+1]=='\\' || command[i+1]=='"')){
+                tmp.push_back(command[i+1]);
+                i++;
+                continue;
+            }
         tmp.push_back(command[i]);
       }else if(command[i]== '\'' && !squotes){
         squotes = true;
@@ -69,14 +74,6 @@ vector<string>tokenize( string &command){
               tmp.clear();
             }
       }else if(command[i]== '\\'){
-          if(dquotes){
-            if(i+1 < command.size() && (command[i+1]=='\\' || command[i+1]=='"')){
-                tmp.push_back(command[i+1]);
-                i++;
-                continue;
-            }
-          
-          }
          if(i+1 < command.size()){
             tmp.push_back(command[i+1]);
             i++;
