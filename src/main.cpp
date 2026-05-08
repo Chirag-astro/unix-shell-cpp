@@ -59,8 +59,10 @@ vector<string>tokenize( string &command){
            quotes = false;
 
         }else if( command[i]== ' '){
+          if(!tmp.empty()){
           v.push_back(tmp);
           tmp.clear();
+          }
         }else{
            tmp.push_back(command[i]);
         }
