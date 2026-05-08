@@ -42,6 +42,34 @@ string is_exec(string cmd){
 
 }
 
+vector<string>tokenize( string &command){
+    vector<string>v;
+    string tmp;
+
+    bool quotes = false;
+
+    for (int i = 0; i < command.size(); i++)
+    {
+      if(command[i] == '\'' && !quotes){
+          quotes = true;
+          
+        }else if(command[i] != '\'' && quotes){
+           tmp.push_back(command[i]);
+        }else if(command[i] == '\'' && quotes){
+           quotes = false;
+
+        }else if( command[i]== ' '){
+          v.push_back(tmp);
+          tmp.clear();
+        }else{
+           tmp.push_back(command[i]);
+        }
+    }
+
+    return v;
+    
+}
+
 int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
@@ -56,17 +84,7 @@ int main() {
     
     getline(cin, command);
     if(command.empty())continue;
-    string cmd;
-    vector<string>args;
-    stringstream ss(command);
-    
-    string token;
-
-    while (ss >> token)
-    {
-      args.push_back(token);
-    }
-    
+    vector<string>args = tokenize(command);
     
     // ss >> cmd >> arg;
     if(args[0] == "exit"){
