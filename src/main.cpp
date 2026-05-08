@@ -68,6 +68,12 @@ vector<string>tokenize( string &command){
               v.push_back(tmp);
               tmp.clear();
             }
+      }else if(command[i]== '\\'){
+         if(i+1 < command.size()){
+            tmp.push_back(command[i+1]);
+            i++;
+         }
+
       }else{
            tmp.push_back(command[i]);
       }
