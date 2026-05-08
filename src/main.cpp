@@ -46,26 +46,31 @@ vector<string>tokenize( string &command){
     vector<string>v;
     string tmp;
 
-    bool quotes = false;
+    bool squotes = false;
+    bool dquotes = false;
 
     for (int i = 0; i < command.size(); i++)
     {
-      if(command[i] == '\'' && !quotes){
-          quotes = true;
-          
-        }else if(command[i] != '\'' && quotes){
-           tmp.push_back(command[i]);
-        }else if(command[i] == '\'' && quotes){
-           quotes = false;
-
-        }else if( command[i]== ' '){
+      if(command[i] != '\'' && squotes){
+         tmp.push_back(command[i]);
+      }else if(command[i] != '"' && dquotes){
+        tmp.push_back(command[i]);
+      }else if(command[i]== '\'' && !squotes){
+        squotes = true;
+      }else if(command[i] == '"' && !dquotes){
+        dquotes = true;
+      }else if( command[i] == '\'' && squotes){
+        squotes = false;
+      }else if(command[i] == '"' && dquotes){
+        dquotes = false;
+      }else if(command[i] == ' '){
           if(!tmp.empty()){
-          v.push_back(tmp);
-          tmp.clear();
-          }
-        }else{
+              v.push_back(tmp);
+              tmp.clear();
+            }
+      }else{
            tmp.push_back(command[i]);
-        }
+      }
     }
 
     if(!tmp.empty())v.push_back(tmp);
