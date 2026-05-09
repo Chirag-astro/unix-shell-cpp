@@ -105,6 +105,20 @@ string parse_redirection(vector<string>&args){
   
 }
 
+string parse_append(vector<string>&args){
+
+    if(args[args.size()-2] == ">>" || args[args.size()-2] == "1>>"){
+      string f = args.back();
+      args.pop_back();
+      args.pop_back();
+
+      return f;
+  }
+
+  return "";
+
+}
+
 string parse_err_redirection(vector<string>&args){
 
   if(args[args.size()-2] == "2>" ){
@@ -117,6 +131,20 @@ string parse_err_redirection(vector<string>&args){
 
   return "";
   
+}
+
+string parse_error_append(vector<string>&args){
+
+    if(args[args.size()-2] == "2>>" ){
+      string f = args.back();
+      args.pop_back();
+      args.pop_back();
+
+      return f;
+  }
+
+  return "";
+
 }
 
 void apply_redirection(string ofname, string efname){
@@ -136,6 +164,22 @@ void apply_redirection(string ofname, string efname){
 void restore_redirection(int f_saved, int e_saved){
     dup2( f_saved, 1);
     dup2(e_saved, 2);
+    close(f_saved);
+    close(e_saved);
+}
+
+void apply_append_redirection(string oa_name, string ea_name){
+  if(!oa_name.empty()){
+         int fd = open(oa_name.c_str(),O_WRONLY | O_CREAT | O_APPEND,0644);
+         dup2(fd, 1);
+         close(fd);
+  }
+
+    if(!ea_name.empty()){
+         int fd = open(ea_name.c_str(),O_WRONLY | O_CREAT | O_APPEND,0644);
+         dup2(fd, 2);
+         close(fd);
+  }
 }
 
 
@@ -156,15 +200,19 @@ int main() {
     if(command.empty())continue;
     vector<string>args = tokenize(command);
     int f_saved  = dup(1);
-    int e_saved  = dup(1);
+    int e_saved  = dup(2);
     string ofname = parse_redirection(args);
     string efname = parse_err_redirection(args);
+    string oa_name = parse_append(args);
+    string ea_name = parse_error_append(args);
+
     
     // ss >> cmd >> arg;
     if(args[0] == "exit"){
       break;
     }else if( args[0] == "echo"){
         apply_redirection(ofname, efname);
+        apply_append_redirection(oa_name, ea_name);
         for (int i = 1; i < args.size(); i++)
         {
            cout << args[i] <<" ";
@@ -175,7 +223,8 @@ int main() {
         
     }else if(args[0] == "type"){
        apply_redirection(ofname, efname);
-
+        apply_append_redirection(oa_name, ea_name);
+       
        if(builtin_commands.find(args[1])!= builtin_commands.end()){
           cout << args[1] << " is a shell builtin\n";
        }else{
@@ -190,6 +239,8 @@ int main() {
 
     }else if(args[0] == "pwd"){
        apply_redirection(ofname, efname);
+        apply_append_redirection(oa_name, ea_name);
+
         char cwd[1024];
         if(getcwd(cwd, sizeof(cwd)) != NULL){
            cout << cwd<<"\n";
@@ -199,6 +250,8 @@ int main() {
     
     }else if(args[0]=="cd"){
        apply_redirection(ofname, efname);
+        apply_append_redirection(oa_name, ea_name);
+
       if(args[1] == "~"){
         string home  = getenv("HOME");
         int op = chdir(home.c_str());
@@ -230,6 +283,8 @@ int main() {
 
                 if(pid == 0){
                   apply_redirection(ofname, efname);
+                   apply_append_redirection(oa_name, ea_name);
+
                   execvp(pth.c_str(),&c_args[0]  );
                   perror("execvp");
                   exit(1);
@@ -241,10 +296,11 @@ int main() {
                 
            }else{
                   apply_redirection(ofname, efname);
+                  apply_append_redirection(oa_name, ea_name);
+
 
               cout << args[0]<<": command not found\n";
 
-              restore_redirection(f_saved, e_saved);
 
            }
 
