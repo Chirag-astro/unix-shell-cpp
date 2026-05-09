@@ -196,6 +196,12 @@ int main() {
                 pid_t pid = fork();
 
                 if(pid == 0){
+                  if(!fname.empty()){
+                    int fd = open(fname.c_str(),O_WRONLY | O_CREAT | O_TRUNC,0644);
+                    dup2(fd, 1);
+                    close(fd);
+
+                  }
                   execvp(pth.c_str(),&c_args[0]  );
                   perror("execvp");
                   exit(1);
