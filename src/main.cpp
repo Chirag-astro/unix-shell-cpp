@@ -105,6 +105,41 @@ string parse_redirection(vector<string>&args){
   
 }
 
+string parse_err_redirection(vector<string>&args){
+
+  if(args[args.size()-2] == "2>" ){
+      string f = args.back();
+      args.pop_back();
+      args.pop_back();
+
+      return f;
+  }
+
+  return "";
+  
+}
+
+void apply_redirection(string ofname, string efname){
+  if(!ofname.empty()){
+         int fd = open(ofname.c_str(),O_WRONLY | O_CREAT | O_TRUNC,0644);
+         dup2(fd, 1);
+         close(fd);
+  }
+
+    if(!efname.empty()){
+         int fd = open(efname.c_str(),O_WRONLY | O_CREAT | O_TRUNC,0644);
+         dup2(fd, 2);
+         close(fd);
+  }
+}
+
+void restore_redirection(int f_saved, int e_saved){
+    dup2( f_saved, 1);
+    dup2(e_saved, 2);
+}
+
+
+
 int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
@@ -120,37 +155,27 @@ int main() {
     getline(cin, command);
     if(command.empty())continue;
     vector<string>args = tokenize(command);
-    string fname = parse_redirection(args);
+    int f_saved  = dup(1);
+    int e_saved  = dup(1);
+    string ofname = parse_redirection(args);
+    string efname = parse_err_redirection(args);
     
     // ss >> cmd >> arg;
     if(args[0] == "exit"){
       break;
     }else if( args[0] == "echo"){
-        if(!fname.empty()){
-          pid_t pid = fork();
-          if(pid == 0){
-              int fd = open(fname.c_str(),O_WRONLY | O_CREAT | O_TRUNC,0644);
-              dup2(fd, 1);
-              close(fd);
-
-              for(int i = 1 ; i < args.size(); i++){
-                  cout << args[i] <<" ";
-              }
-              cout<<"\n";
-              exit(0);
-
-          }else{
-                waitpid(pid, nullptr, 0);
-          }
-        }else{
+        apply_redirection(ofname, efname);
         for (int i = 1; i < args.size(); i++)
         {
            cout << args[i] <<" ";
         }
         cout<<"\n";
-      }
+        restore_redirection(f_saved, e_saved);
+      
         
     }else if(args[0] == "type"){
+       apply_redirection(ofname, efname);
+
        if(builtin_commands.find(args[1])!= builtin_commands.end()){
           cout << args[1] << " is a shell builtin\n";
        }else{
@@ -161,13 +186,19 @@ int main() {
              cout << args[1] <<": not found\n";
            }
        }
+        restore_redirection(f_saved, e_saved);
+
     }else if(args[0] == "pwd"){
+       apply_redirection(ofname, efname);
         char cwd[1024];
         if(getcwd(cwd, sizeof(cwd)) != NULL){
            cout << cwd<<"\n";
         }
+        restore_redirection(f_saved, e_saved);
+
     
     }else if(args[0]=="cd"){
+       apply_redirection(ofname, efname);
       if(args[1] == "~"){
         string home  = getenv("HOME");
         int op = chdir(home.c_str());
@@ -182,6 +213,8 @@ int main() {
         cout << "cd: " << args[1] <<": No such file or directory\n";
        }
       }
+        restore_redirection(f_saved, e_saved);
+
     
     }else{
             string pth = is_exec(args[0]);
@@ -196,12 +229,7 @@ int main() {
                 pid_t pid = fork();
 
                 if(pid == 0){
-                  if(!fname.empty()){
-                    int fd = open(fname.c_str(),O_WRONLY | O_CREAT | O_TRUNC,0644);
-                    dup2(fd, 1);
-                    close(fd);
-
-                  }
+                  apply_redirection(ofname, efname);
                   execvp(pth.c_str(),&c_args[0]  );
                   perror("execvp");
                   exit(1);
@@ -212,7 +240,11 @@ int main() {
 
                 
            }else{
+                  apply_redirection(ofname, efname);
+
               cout << args[0]<<": command not found\n";
+
+              restore_redirection(f_saved, e_saved);
 
            }
 
