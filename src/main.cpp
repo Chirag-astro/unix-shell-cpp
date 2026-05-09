@@ -133,8 +133,8 @@ int main() {
               dup2(fd, 1);
               close(fd);
 
-              for(auto c : args){
-                  cout << c <<" ";
+              for(int i = 1 ; i < args.size(); i++){
+                  cout << args[i] <<" ";
               }
               cout<<"\n";
               exit(0);
