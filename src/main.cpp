@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 using namespace std;
 
@@ -90,6 +91,20 @@ vector<string>tokenize( string &command){
     
 }
 
+string parse_redirection(vector<string>&args){
+
+  if(args[args.size()-2] == ">" || args[args.size()-2] == "1>"){
+      string f = args.back();
+      args.pop_back();
+      args.pop_back();
+
+      return f;
+  }
+
+  return "";
+  
+}
+
 int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
@@ -105,16 +120,35 @@ int main() {
     getline(cin, command);
     if(command.empty())continue;
     vector<string>args = tokenize(command);
+    string fname = parse_redirection(args);
     
     // ss >> cmd >> arg;
     if(args[0] == "exit"){
       break;
     }else if( args[0] == "echo"){
+        if(!fname.empty()){
+          pid_t pid = fork();
+          if(pid == 0){
+              int fd = open(fname.c_str(),O_WRONLY | O_CREAT | O_TRUNC,0644);
+              dup2(fd, 1);
+              close(fd);
+
+              for(auto c : args){
+                  cout << c <<" ";
+              }
+              cout<<"\n";
+              exit(0);
+
+          }else{
+                waitpid(pid, nullptr, 0);
+          }
+        }else{
         for (int i = 1; i < args.size(); i++)
         {
            cout << args[i] <<" ";
         }
         cout<<"\n";
+      }
         
     }else if(args[0] == "type"){
        if(builtin_commands.find(args[1])!= builtin_commands.end()){
