@@ -258,8 +258,8 @@ void find_all_executables(){
 
      while ((entry = readdir(dp)) != NULL) {
       string cmd =  entry->d_name;
-      pth.append(cmd);
-      if(access(pth.c_str(),X_OK)==0){
+      string x = pth + cmd;
+      if(access(x.c_str(),X_OK)==0){
         executables.insert(cmd);
       }
 
@@ -276,7 +276,7 @@ int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
-   find_all_executables();
+  find_all_executables();
   rl_attempted_completion_function = command_completion;
 
   // TODO: Uncomment the code below to pass the first stage
