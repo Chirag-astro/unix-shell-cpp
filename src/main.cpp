@@ -18,6 +18,7 @@ string is_exec(string cmd){
     string path  = getenv("PATH");
     vector<string>directories;
     string tmp;
+    string pth = "";
 
     for(auto c : path){
       if(c==':'){
