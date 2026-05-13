@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <readline/readline.h>
 
 using namespace std;
 
@@ -182,21 +183,61 @@ void apply_append_redirection(string oa_name, string ea_name){
   }
 }
 
+vector<string> builtin_list = {
+    "echo",
+    "type",
+    "exit",
+    "pwd",
+    "cd"
+};
+
+char* command_generator(const char* text, int state) {
+    static int index;
+    static vector<string> matches;
+
+    if(state == 0){
+        index = 0;
+        matches.clear();
+
+        string prefix(text);
+
+        for(auto &cmd : builtin_list){
+            if(cmd.substr(0, prefix.size()) == prefix){
+                matches.push_back(cmd);
+            }
+        }
+    }
+
+    if(index < matches.size()){
+        return strdup(matches[index++].c_str());
+    }
+
+    return nullptr;
+}
+
+char** command_completion(const char* text, int start, int end) {
+
+    rl_attempted_completion_over = 1;
+
+    return rl_completion_matches(text, command_generator);
+}
+
 
 
 int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
+  rl_attempted_completion_function = command_completion;
 
   // TODO: Uncomment the code below to pass the first stage
   string command;
   unordered_set<string>builtin_commands = {"echo", "type", "exit", "pwd", "cd"};  
 
   while(true){
-    std::cout << "$ ";
-    
-    getline(cin, command);
+    char* input = readline("$ ");
+    command = string(input);
+    free(input);
     if(command.empty())continue;
     vector<string>args = tokenize(command);
     int f_saved  = dup(1);
