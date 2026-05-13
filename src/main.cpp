@@ -258,7 +258,7 @@ void find_all_executables(){
 
      while ((entry = readdir(dp)) != NULL) {
       string cmd =  entry->d_name;
-      string x = pth + cmd;
+      string x = pth + '/'+ cmd;
       if(access(x.c_str(),X_OK)==0){
         executables.insert(cmd);
       }
