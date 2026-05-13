@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <readline/readline.h>
+#include <dirent.h>
 
 using namespace std;
 
@@ -183,7 +184,7 @@ void apply_append_redirection(string oa_name, string ea_name){
   }
 }
 
-vector<string> builtin_list = {
+unordered_set<string> builtin_list = {
     "echo",
     "type",
     "exit",
@@ -206,6 +207,12 @@ char* command_generator(const char* text, int state) {
                 matches.push_back(cmd);
             }
         }
+
+        for(auto &cmd : executables){
+            if(cmd.substr(0, prefix.size()) == prefix){
+                matches.push_back(cmd);
+            }
+        }
     }
 
     if(index < matches.size()){
@@ -220,6 +227,46 @@ char** command_completion(const char* text, int start, int end) {
     rl_attempted_completion_over = 1;
 
     return rl_completion_matches(text, command_generator);
+}
+
+unordered_set<string>executables;
+
+void find_all_executables(){
+   string path = getenv("PATH");
+   vector<string>dir;
+   string tmp;
+
+   for(auto c : path){
+    if(c == ":"){
+      dir.push_back(tmp);
+      tmp.clear();
+    }else{
+      tmp.push_back(c);
+    }
+   }
+   dir.push_back(tmp);
+
+   for(auto c : dir){
+     struct dirent *entry;
+     string pth = c;
+     DIR *dp = opendir(c.c_str());
+      if (dp == NULL) {
+        perror("opendir");
+        return 1;
+    }
+
+     while ((entry = readdir(dp)) != NULL) {
+      string cmd =  entry->d_name;
+      pth.append(cmd);
+      if(access(pth.c_str(),X_OK)==0){
+        executables.insert(cmd);
+      }
+
+    }
+    closedir(dp);
+
+   }
+
 }
 
 
