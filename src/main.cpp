@@ -192,6 +192,9 @@ unordered_set<string> builtin_list = {
     "cd"
 };
 
+unordered_set<string>executables;
+
+
 char* command_generator(const char* text, int state) {
     static int index;
     static vector<string> matches;
@@ -229,7 +232,6 @@ char** command_completion(const char* text, int start, int end) {
     return rl_completion_matches(text, command_generator);
 }
 
-unordered_set<string>executables;
 
 void find_all_executables(){
    string path = getenv("PATH");
