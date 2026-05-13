@@ -18,7 +18,6 @@ string is_exec(string cmd){
     string path  = getenv("PATH");
     vector<string>directories;
     string tmp;
-    string pth = "";
 
     for(auto c : path){
       if(c==':'){
@@ -239,7 +238,7 @@ void find_all_executables(){
    string tmp;
 
    for(auto c : path){
-    if(c == ":"){
+    if(c == ':'){
       dir.push_back(tmp);
       tmp.clear();
     }else{
