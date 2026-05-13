@@ -253,8 +253,7 @@ void find_all_executables(){
      string pth = c;
      DIR *dp = opendir(c.c_str());
       if (dp == NULL) {
-        perror("opendir");
-        return 1;
+        continue;   
     }
 
      while ((entry = readdir(dp)) != NULL) {
