@@ -110,7 +110,7 @@ vector<string>tokenize( string &command){
 
 string parse_redirection(vector<string>&args){
 
-  if( args.size()>=2 && args[args.size()-2] == ">" || args[args.size()-2] == "1>"){
+  if( args.size()>=2 && (args[args.size()-2] == ">" || args[args.size()-2] == "1>")){
       string f = args.back();
       args.pop_back();
       args.pop_back();
@@ -124,7 +124,7 @@ string parse_redirection(vector<string>&args){
 
 string parse_append(vector<string>&args){
 
-    if( args.size()>=2 && args[args.size()-2] == ">>" || args[args.size()-2] == "1>>"){
+    if( args.size()>=2 && (args[args.size()-2] == ">>" || args[args.size()-2] == "1>>")){
       string f = args.back();
       args.pop_back();
       args.pop_back();
