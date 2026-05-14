@@ -347,9 +347,7 @@ int main() {
 
       if(i != 0){
         apply_pipe_input(prev_rd);
-        // string s;
-        // cin >> s;
-        // cout << "ye mera print hai" <<" "<< s <<"\n";
+
       }
 
       if( i != pipe_tokenzied.size()-1){
@@ -362,7 +360,7 @@ int main() {
          restore_pipe_opr(o_saved);
       }
 
-              apply_redirection(ofname, efname);
+        apply_redirection(ofname, efname);
         apply_append_redirection(oa_name, ea_name);
 
     if(args[0] == "exit"){
@@ -444,7 +442,7 @@ int main() {
 
                   execvp(pth.c_str(),&c_args[0]  );
                   perror("execvp");
-                  exit(1);
+                  // exit(1);
 
                 }else{
                   pids.push_back(pid);
@@ -458,19 +456,12 @@ int main() {
            }else{
                   // apply_redirection(ofname, efname);
                   // apply_append_redirection(oa_name, ea_name);
-
-
               cout << args[0]<<": command not found\n";
 
 
            }
 
     }
-
-
-
-
-    // restore_pipe_ipr(i_saved);
 
     }
         for(auto &pid : pids){
