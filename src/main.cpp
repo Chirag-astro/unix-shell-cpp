@@ -429,6 +429,8 @@ int main()
 
       if (builtin_commands.count(args[0]))
       {
+        if (i != 0) apply_pipe_input(prev_rd); 
+        if (i != pipe_tokenzied.size() - 1) apply_pipe_redirection(fd[1]);        
         apply_redirection(ofname, efname);
         apply_append_redirection(oa_name, ea_name);
 
@@ -495,8 +497,13 @@ int main()
             }
           }
         }
-        restore_op_redirection(o_saved);
-        restore_err_redirection(e_saved);
+        dup2(o_saved, 1);
+        dup2(e_saved, 2);
+        dup2(i_saved, 0);
+
+        if (i != pipe_tokenzied.size() - 1) {
+            prev_rd = fd[0];
+        }
       }else{
 
         string pth = is_exec(args[0]);
