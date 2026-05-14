@@ -472,6 +472,12 @@ int main() {
                   execvp(pth.c_str(),&c_args[0]  );
                   perror("execvp");
                   exit(1);
+                        if(!ofname.empty() || !oa_name.empty()){
+        restore_op_redirection(o_saved);
+      }
+      if(!efname.empty() || !ea_name.empty()){
+        restore_err_redirection(e_saved);
+      }
 
                 }else{
                   pids.push_back(pid);
@@ -489,12 +495,7 @@ int main() {
 
 
            }
-                 if(!ofname.empty() || !oa_name.empty()){
-        restore_op_redirection(o_saved);
-      }
-      if(!efname.empty() || !ea_name.empty()){
-        restore_err_redirection(e_saved);
-      }
+
 
     }
 
