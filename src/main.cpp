@@ -309,7 +309,7 @@ int main() {
   rl_attempted_completion_function = command_completion;
 
   // TODO: Uncomment the code below to pass the first stage
-  string command;
+  string og_command;
   unordered_set<string>builtin_commands = {"echo", "type", "exit", "pwd", "cd"};  
 
   while(true){
@@ -436,7 +436,7 @@ int main() {
 
 
            }
-           restore_redirection(f_saved, e_saved, i_saved);
+           restore_redirection(o_saved, e_saved, i_saved);
 
     }
 
