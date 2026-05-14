@@ -348,16 +348,17 @@ int main() {
       string oa_name = parse_append(args);
       string ea_name = parse_error_append(args);
 
-
+      if(i != 0){
+        apply_pipe_input(prev_rd);
+      }
+      
       if( i != pipe_tokenzied.size()-1){
         pipe(fd);
         prev_rd = fd[0];
         apply_pipe_redirection(fd[1]); 
       }
 
-      if(i != 0){
-        apply_pipe_input(prev_rd);
-      }
+
 
       // if(i == pipe_tokenzied.size()-1){
       //    restore_pipe_opr(o_saved);
