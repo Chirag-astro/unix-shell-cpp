@@ -332,7 +332,7 @@ int main() {
 
 
 
-      vector<int>pids;
+      vector<pid_t>pids;
       int prev_rd = -1;
       int o_saved  = dup(1);
       int e_saved  = dup(2);
@@ -351,14 +351,12 @@ int main() {
       if(i != 0){
         apply_pipe_input(prev_rd);
       }
-      
+
       if( i != pipe_tokenzied.size()-1){
         pipe(fd);
         prev_rd = fd[0];
         apply_pipe_redirection(fd[1]); 
       }
-
-
 
       // if(i == pipe_tokenzied.size()-1){
       //    restore_pipe_opr(o_saved);
