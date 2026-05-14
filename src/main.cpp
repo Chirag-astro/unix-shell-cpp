@@ -330,13 +330,16 @@ int main() {
     vector<string>pipe_tokenzied = pipe_tokenizer(og_command);
     // vector<string>args = tokenize(command);
 
-      int fd[2];
-      pipe(fd);
+
+
+      vector<int>pids;
+      int prev_rd = -1;
 
     for(int i = 0 ; i < pipe_tokenzied.size(); i++){
       
       string command = pipe_tokenzied[i];
       vector<string>args = tokenize(command);
+      int fd[2];
       int o_saved  = dup(1);
       int e_saved  = dup(2);
       int i_saved = dup(0);
@@ -347,33 +350,38 @@ int main() {
 
 
       if( i != pipe_tokenzied.size()-1){
+        pipe(fd);
+        prev_rd = fd[0];
         apply_pipe_redirection(fd[1]); 
       }
 
       if(i != 0){
-        apply_pipe_input(fd[0]);
+        apply_pipe_input(prev_rd);
       }
 
       if(i == pipe_tokenzied.size()-1){
          restore_pipe_opr(o_saved);
       }
 
+              apply_redirection(ofname, efname);
+        apply_append_redirection(oa_name, ea_name);
+
           if(args[0] == "exit"){
       break;
     }else if( args[0] == "echo"){
-        apply_redirection(ofname, efname);
-        apply_append_redirection(oa_name, ea_name);
+        // apply_redirection(ofname, efname);
+        // apply_append_redirection(oa_name, ea_name);
         for (int i = 1; i < args.size(); i++)
         {
            cout << args[i] <<" ";
         }
         cout<<"\n";
-        restore_redirection(o_saved, e_saved, i_saved);
+        // restore_redirection(o_saved, e_saved, i_saved);
       
         
     }else if(args[0] == "type"){
-       apply_redirection(ofname, efname);
-        apply_append_redirection(oa_name, ea_name);
+      //  apply_redirection(ofname, efname);
+        // apply_append_redirection(oa_name, ea_name);
        
        if(builtin_commands.find(args[1])!= builtin_commands.end()){
           cout << args[1] << " is a shell builtin\n";
@@ -385,22 +393,22 @@ int main() {
              cout << args[1] <<": not found\n";
            }
        }
-        restore_redirection(o_saved, e_saved, i_saved);
+        // restore_redirection(o_saved, e_saved, i_saved);
 
     }else if(args[0] == "pwd"){
-       apply_redirection(ofname, efname);
-        apply_append_redirection(oa_name, ea_name);
+      //  apply_redirection(ofname, efname);
+        // apply_append_redirection(oa_name, ea_name);
 
         char cwd[1024];
         if(getcwd(cwd, sizeof(cwd)) != NULL){
            cout << cwd<<"\n";
         }
-        restore_redirection(o_saved, e_saved, i_saved);
+        // restore_redirection(o_saved, e_saved, i_saved);
 
     
     }else if(args[0]=="cd"){
-       apply_redirection(ofname, efname);
-        apply_append_redirection(oa_name, ea_name);
+      //  apply_redirection(ofname, efname);
+        // apply_append_redirection(oa_name, ea_name);
 
       if(args[1] == "~"){
         string home  = getenv("HOME");
@@ -416,7 +424,7 @@ int main() {
         cout << "cd: " << args[1] <<": No such file or directory\n";
        }
       }
-        restore_redirection(o_saved, e_saved, i_saved);
+        // restore_redirection(o_saved, e_saved, i_saved);
 
     
     }else{
@@ -432,34 +440,45 @@ int main() {
                 pid_t pid = fork();
 
                 if(pid == 0){
-                  apply_redirection(ofname, efname);
-                   apply_append_redirection(oa_name, ea_name);
+                  // apply_redirection(ofname, efname);
+                  //  apply_append_redirection(oa_name, ea_name);
 
                   execvp(pth.c_str(),&c_args[0]  );
                   perror("execvp");
                   exit(1);
 
                 }else{
-                  waitpid(pid, nullptr, 0);
+                  pids.push_back(pid);
                 }
+                // else{
+                //   waitpid(pid, nullptr, 0);
+                // }
 
                 
            }else{
-                  apply_redirection(ofname, efname);
-                  apply_append_redirection(oa_name, ea_name);
+                  // apply_redirection(ofname, efname);
+                  // apply_append_redirection(oa_name, ea_name);
 
 
               cout << args[0]<<": command not found\n";
 
 
            }
-           restore_redirection(o_saved, e_saved, i_saved);
 
     }
-    if(i== pipe_tokenzied.size()-1)
+
+
+    for(auto &pid : pids){
+      waitpid(pid, nullptr, 0);
+    }
+
+        if(i== pipe_tokenzied.size()-1)
     restore_pipe_ipr(i_saved);
 
     }
+
+      restore_redirection(o_saved, e_saved, i_saved);
+
 
     // int f_saved  = dup(1);
     // int e_saved  = dup(2);
