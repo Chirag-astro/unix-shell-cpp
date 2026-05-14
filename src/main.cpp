@@ -472,10 +472,10 @@ int main() {
            }
 
     }
-      if(ofname || oa_name){
+      if(!ofname.empty() || !oa_name.empty()){
         restore_op_redirection(o_saved);
       }
-      if(efname || ea_name){
+      if(!efname.empty() || !ea_name.empty()){
         restore_err_redirection(e_saved);
       }
 
