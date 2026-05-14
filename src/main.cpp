@@ -442,7 +442,7 @@ int main() {
 
                   execvp(pth.c_str(),&c_args[0]  );
                   perror("execvp");
-                  // exit(1);
+                  exit(1);
 
                 }else{
                   pids.push_back(pid);
@@ -464,11 +464,12 @@ int main() {
     }
 
     }
+    restore_redirection(o_saved, e_saved, i_saved);
+
         for(auto &pid : pids){
       waitpid(pid, nullptr, 0);
     }
 
-      restore_redirection(o_saved, e_saved, i_saved);
 
 
     // int f_saved  = dup(1);
