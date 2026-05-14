@@ -462,13 +462,16 @@ int main() {
            }
 
     }
+      if(i == pipe_tokenzied.size()-1)
+    restore_redirection(o_saved, e_saved, i_saved);
 
     }
-    restore_redirection(o_saved, e_saved, i_saved);
 
         for(auto &pid : pids){
       waitpid(pid, nullptr, 0);
     }
+
+
 
 
 
