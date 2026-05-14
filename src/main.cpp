@@ -45,6 +45,21 @@ string is_exec(string cmd){
 
 }
 
+vector<string>pipe_tokenizer(string &command){
+  vector<string>v;
+  string tmp;
+  for(auto c : command){
+    if(c == '|'){
+      v.push_back(tmp);
+      tmp.clear();
+    }else{
+      tmp.push_back(c);
+    }
+  }
+  v.push_back(tmp);
+  return v;
+}
+
 vector<string>tokenize( string &command){
     vector<string>v;
     string tmp;
@@ -163,11 +178,13 @@ void apply_redirection(string ofname, string efname){
   }
 }
 
-void restore_redirection(int f_saved, int e_saved){
+void restore_redirection(int f_saved, int e_saved, int i_saved){
     dup2( f_saved, 1);
     dup2(e_saved, 2);
+    dup2(i_saved,0);
     close(f_saved);
     close(e_saved);
+    close(i_saved);
 }
 
 void apply_append_redirection(string oa_name, string ea_name){
@@ -182,6 +199,18 @@ void apply_append_redirection(string oa_name, string ea_name){
          dup2(fd, 2);
          close(fd);
   }
+}
+
+void apply_pipe_redirection(int fd1 ){
+
+    dup2(fd1, 1);
+    close(fd1);
+
+}
+
+void apply_pipe_input(int fd0){
+  dup2(fd0,0);
+  close(fd0);
 }
 
 unordered_set<string> builtin_list = {
@@ -285,20 +314,34 @@ int main() {
 
   while(true){
     char* input = readline("$ ");
-    command = string(input);
+    og_command = string(input);
     free(input);
-    if(command.empty())continue;
-    vector<string>args = tokenize(command);
-    int f_saved  = dup(1);
-    int e_saved  = dup(2);
-    string ofname = parse_redirection(args);
-    string efname = parse_err_redirection(args);
-    string oa_name = parse_append(args);
-    string ea_name = parse_error_append(args);
+    if(og_command.empty())continue;
+    vector<string>pipe_tokenzied = pipe_tokenizer(og_command);
+    // vector<string>args = tokenize(command);
 
-    
-    // ss >> cmd >> arg;
-    if(args[0] == "exit"){
+    for(int i = 0 ; i < pipe_tokenzied.size(); i++){
+      string command = pipe_tokenzied[i];
+      vector<string>args = tokenize(command);
+      int o_saved  = dup(1);
+      int e_saved  = dup(2);
+      int i_saved = dup(0);
+      string ofname = parse_redirection(args);
+      string efname = parse_err_redirection(args);
+      string oa_name = parse_append(args);
+      string ea_name = parse_error_append(args);
+      int fd[2];
+      pipe(fd);
+
+      if( i != pipe_tokenzied.size()-1){
+        apply_pipe_redirection(fd[1]); 
+      }
+
+      if(i != 0){
+        apply_pipe_input(fd[0]);
+      }
+
+          if(args[0] == "exit"){
       break;
     }else if( args[0] == "echo"){
         apply_redirection(ofname, efname);
@@ -308,7 +351,7 @@ int main() {
            cout << args[i] <<" ";
         }
         cout<<"\n";
-        restore_redirection(f_saved, e_saved);
+        restore_redirection(o_saved, e_saved, i_saved);
       
         
     }else if(args[0] == "type"){
@@ -325,7 +368,7 @@ int main() {
              cout << args[1] <<": not found\n";
            }
        }
-        restore_redirection(f_saved, e_saved);
+        restore_redirection(o_saved, e_saved, i_saved);
 
     }else if(args[0] == "pwd"){
        apply_redirection(ofname, efname);
@@ -335,7 +378,7 @@ int main() {
         if(getcwd(cwd, sizeof(cwd)) != NULL){
            cout << cwd<<"\n";
         }
-        restore_redirection(f_saved, e_saved);
+        restore_redirection(o_saved, e_saved, i_saved);
 
     
     }else if(args[0]=="cd"){
@@ -356,7 +399,7 @@ int main() {
         cout << "cd: " << args[1] <<": No such file or directory\n";
        }
       }
-        restore_redirection(f_saved, e_saved);
+        restore_redirection(o_saved, e_saved, i_saved);
 
     
     }else{
@@ -393,7 +436,117 @@ int main() {
 
 
            }
+           restore_redirection(f_saved, e_saved, i_saved);
 
     }
+
+    }
+
+    // int f_saved  = dup(1);
+    // int e_saved  = dup(2);
+    // string ofname = parse_redirection(args);
+    // string efname = parse_err_redirection(args);
+    // string oa_name = parse_append(args);
+    // string ea_name = parse_error_append(args);
+
+    
+    // // ss >> cmd >> arg;
+    // if(args[0] == "exit"){
+    //   break;
+    // }else if( args[0] == "echo"){
+    //     apply_redirection(ofname, efname);
+    //     apply_append_redirection(oa_name, ea_name);
+    //     for (int i = 1; i < args.size(); i++)
+    //     {
+    //        cout << args[i] <<" ";
+    //     }
+    //     cout<<"\n";
+    //     restore_redirection(f_saved, e_saved);
+      
+        
+    // }else if(args[0] == "type"){
+    //    apply_redirection(ofname, efname);
+    //     apply_append_redirection(oa_name, ea_name);
+       
+    //    if(builtin_commands.find(args[1])!= builtin_commands.end()){
+    //       cout << args[1] << " is a shell builtin\n";
+    //    }else{
+    //         string pth = is_exec(args[1]);
+    //        if(!pth.empty()){
+    //             cout << args[1] <<" is "<< pth<<"\n";
+    //        }else{
+    //          cout << args[1] <<": not found\n";
+    //        }
+    //    }
+    //     restore_redirection(f_saved, e_saved);
+
+    // }else if(args[0] == "pwd"){
+    //    apply_redirection(ofname, efname);
+    //     apply_append_redirection(oa_name, ea_name);
+
+    //     char cwd[1024];
+    //     if(getcwd(cwd, sizeof(cwd)) != NULL){
+    //        cout << cwd<<"\n";
+    //     }
+    //     restore_redirection(f_saved, e_saved);
+
+    
+    // }else if(args[0]=="cd"){
+    //    apply_redirection(ofname, efname);
+    //     apply_append_redirection(oa_name, ea_name);
+
+    //   if(args[1] == "~"){
+    //     string home  = getenv("HOME");
+    //     int op = chdir(home.c_str());
+    //     if(op==-1){
+    //     cout << "cd: " << args[1] <<": No such file or directory\n";
+    //         }
+        
+    //   }else{
+    //   const char* dir = args[1].c_str();
+    //   int op = chdir(dir);
+    //    if(op==-1){
+    //     cout << "cd: " << args[1] <<": No such file or directory\n";
+    //    }
+    //   }
+    //     restore_redirection(f_saved, e_saved);
+
+    
+    // }else{
+    //         string pth = is_exec(args[0]);
+    //         vector<char*>c_args;
+    //         for(auto &c : args){
+    //            char* strng = (char*)c.c_str();
+    //            c_args.push_back(strng);
+    //         }
+    //         c_args.push_back(nullptr);
+
+    //         if(!pth.empty()){
+    //             pid_t pid = fork();
+
+    //             if(pid == 0){
+    //               apply_redirection(ofname, efname);
+    //                apply_append_redirection(oa_name, ea_name);
+
+    //               execvp(pth.c_str(),&c_args[0]  );
+    //               perror("execvp");
+    //               exit(1);
+
+    //             }else{
+    //               waitpid(pid, nullptr, 0);
+    //             }
+
+                
+    //        }else{
+    //               apply_redirection(ofname, efname);
+    //               apply_append_redirection(oa_name, ea_name);
+
+
+    //           cout << args[0]<<": command not found\n";
+
+
+    //        }
+
+    // }
   }
 }
