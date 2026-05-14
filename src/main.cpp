@@ -334,15 +334,15 @@ int main() {
 
       vector<int>pids;
       int prev_rd = -1;
+      int o_saved  = dup(1);
+      int e_saved  = dup(2);
+      int i_saved = dup(0);
 
     for(int i = 0 ; i < pipe_tokenzied.size(); i++){
       
       string command = pipe_tokenzied[i];
       vector<string>args = tokenize(command);
       int fd[2];
-      int o_saved  = dup(1);
-      int e_saved  = dup(2);
-      int i_saved = dup(0);
       string ofname = parse_redirection(args);
       string efname = parse_err_redirection(args);
       string oa_name = parse_append(args);
@@ -359,9 +359,9 @@ int main() {
         apply_pipe_input(prev_rd);
       }
 
-      if(i == pipe_tokenzied.size()-1){
-         restore_pipe_opr(o_saved);
-      }
+      // if(i == pipe_tokenzied.size()-1){
+      //    restore_pipe_opr(o_saved);
+      // }
 
               apply_redirection(ofname, efname);
         apply_append_redirection(oa_name, ea_name);
@@ -468,13 +468,13 @@ int main() {
     }
 
 
-    for(auto &pid : pids){
-      waitpid(pid, nullptr, 0);
+
+
+    // restore_pipe_ipr(i_saved);
+
     }
-
-        if(i== pipe_tokenzied.size()-1)
-    restore_pipe_ipr(i_saved);
-
+        for(auto &pid : pids){
+      waitpid(pid, nullptr, 0);
     }
 
       restore_redirection(o_saved, e_saved, i_saved);
