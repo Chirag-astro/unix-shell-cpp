@@ -339,7 +339,7 @@ int main() {
       int i_saved = dup(0);
 
     for(int i = 0 ; i < pipe_tokenzied.size(); i++){
-      cout << i <<"\n";
+      cout << pipe_tokenzied.size() <<"\n";
       
       string command = pipe_tokenzied[i];
       vector<string>args = tokenize(command);
