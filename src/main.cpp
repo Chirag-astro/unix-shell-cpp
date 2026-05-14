@@ -400,6 +400,12 @@ int main() {
              cout << args[1] <<": not found\n";
            }
        }
+             if(!ofname.empty() || !oa_name.empty()){
+        restore_op_redirection(o_saved);
+      }
+      if(!efname.empty() || !ea_name.empty()){
+        restore_err_redirection(e_saved);
+      }
         // restore_redirection(o_saved, e_saved, i_saved);
 
     }else if(args[0] == "pwd"){
@@ -410,6 +416,12 @@ int main() {
         if(getcwd(cwd, sizeof(cwd)) != NULL){
            cout << cwd<<"\n";
         }
+              if(!ofname.empty() || !oa_name.empty()){
+        restore_op_redirection(o_saved);
+      }
+      if(!efname.empty() || !ea_name.empty()){
+        restore_err_redirection(e_saved);
+      }
         // restore_redirection(o_saved, e_saved, i_saved);
 
     
@@ -430,6 +442,13 @@ int main() {
        if(op==-1){
         cout << "cd: " << args[1] <<": No such file or directory\n";
        }
+      }
+
+            if(!ofname.empty() || !oa_name.empty()){
+        restore_op_redirection(o_saved);
+      }
+      if(!efname.empty() || !ea_name.empty()){
+        restore_err_redirection(e_saved);
       }
         // restore_redirection(o_saved, e_saved, i_saved);
 
@@ -470,14 +489,15 @@ int main() {
 
 
            }
-
-    }
-      if(!ofname.empty() || !oa_name.empty()){
+                 if(!ofname.empty() || !oa_name.empty()){
         restore_op_redirection(o_saved);
       }
       if(!efname.empty() || !ea_name.empty()){
         restore_err_redirection(e_saved);
       }
+
+    }
+
 
     }
 
