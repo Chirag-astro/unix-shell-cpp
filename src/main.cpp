@@ -178,13 +178,23 @@ void apply_redirection(string ofname, string efname){
   }
 }
 
-void restore_redirection(int f_saved, int e_saved, int i_saved){
-    dup2( f_saved, 1);
+void restore_redirection(int o_saved, int e_saved, int i_saved){
+    dup2( o_saved, 1);
     dup2(e_saved, 2);
     dup2(i_saved,0);
-    close(f_saved);
+    close(o_saved);
     close(e_saved);
     close(i_saved);
+}
+
+void restore_pipe_opr(int o_saved){
+  dup2(o_saved,1);
+  close(o_saved);
+}
+
+void restore_pipe_ipr(int i_saved){
+  dup2(i_saved,0);
+  close(i_saved);
 }
 
 void apply_append_redirection(string oa_name, string ea_name){
@@ -320,7 +330,11 @@ int main() {
     vector<string>pipe_tokenzied = pipe_tokenizer(og_command);
     // vector<string>args = tokenize(command);
 
+      int fd[2];
+      pipe(fd);
+
     for(int i = 0 ; i < pipe_tokenzied.size(); i++){
+      
       string command = pipe_tokenzied[i];
       vector<string>args = tokenize(command);
       int o_saved  = dup(1);
@@ -330,8 +344,7 @@ int main() {
       string efname = parse_err_redirection(args);
       string oa_name = parse_append(args);
       string ea_name = parse_error_append(args);
-      int fd[2];
-      pipe(fd);
+
 
       if( i != pipe_tokenzied.size()-1){
         apply_pipe_redirection(fd[1]); 
@@ -339,6 +352,10 @@ int main() {
 
       if(i != 0){
         apply_pipe_input(fd[0]);
+      }
+
+      if(i == pipe_tokenzied.size()-1){
+         restore_pipe_opr(o_saved);
       }
 
           if(args[0] == "exit"){
@@ -439,6 +456,8 @@ int main() {
            restore_redirection(o_saved, e_saved, i_saved);
 
     }
+    if(i== pipe_tokenzied.size()-1)
+    restore_pipe_ipr(i_saved);
 
     }
 
