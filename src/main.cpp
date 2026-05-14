@@ -346,10 +346,6 @@ int main() {
       string ea_name = parse_error_append(args);
 
       if(i != 0){
-        cout <<"inngorng\n";
-      }
-
-      if(i != 0){
         apply_pipe_input(prev_rd);
         string s;
         cin >> s;
@@ -453,6 +449,7 @@ int main() {
                 }else{
                   pids.push_back(pid);
                 }
+                cout<<"vev";
                 // else{
                 //   waitpid(pid, nullptr, 0);
                 // }
