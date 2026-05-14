@@ -434,7 +434,7 @@ int main()
 
         if (args[0] == "exit")
         {
-          break;
+          exit(0);
         }
         else if (args[0] == "echo")
         {
