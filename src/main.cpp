@@ -347,9 +347,9 @@ int main() {
 
       if(i != 0){
         apply_pipe_input(prev_rd);
-        string s;
-        cin >> s;
-        cout << "ye mera print hai" <<" "<< s <<"\n";
+        // string s;
+        // cin >> s;
+        // cout << "ye mera print hai" <<" "<< s <<"\n";
       }
 
       if( i != pipe_tokenzied.size()-1){
@@ -358,9 +358,9 @@ int main() {
         apply_pipe_redirection(fd[1]); 
       }
 
-      // if(i == pipe_tokenzied.size()-1){
-      //    restore_pipe_opr(o_saved);
-      // }
+      if(i == pipe_tokenzied.size()-1){
+         restore_pipe_opr(o_saved);
+      }
 
               apply_redirection(ofname, efname);
         apply_append_redirection(oa_name, ea_name);
@@ -449,7 +449,7 @@ int main() {
                 }else{
                   pids.push_back(pid);
                 }
-                cout<<"vev";
+                
                 // else{
                 //   waitpid(pid, nullptr, 0);
                 // }
