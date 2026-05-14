@@ -350,6 +350,9 @@ int main() {
 
       if(i != 0){
         apply_pipe_input(prev_rd);
+        string s;
+        cin >> s;
+        cout << "ye mera print hai" <<" "<< s <<"\n";
       }
 
       if( i != pipe_tokenzied.size()-1){
