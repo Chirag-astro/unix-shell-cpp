@@ -328,9 +328,6 @@ int main() {
     free(input);
     if(og_command.empty())continue;
     vector<string>pipe_tokenzied = pipe_tokenizer(og_command);
-    // vector<string>args = tokenize(command);
-
-
 
       vector<pid_t>pids;
       int prev_rd = -1;
@@ -339,7 +336,6 @@ int main() {
       int i_saved = dup(0);
 
     for(int i = 0 ; i < pipe_tokenzied.size(); i++){
-      cout << pipe_tokenzied.size() <<"\n";
       
       string command = pipe_tokenzied[i];
       vector<string>args = tokenize(command);
@@ -348,6 +344,10 @@ int main() {
       string efname = parse_err_redirection(args);
       string oa_name = parse_append(args);
       string ea_name = parse_error_append(args);
+
+      if(i != 0){
+        cout <<"inngorng\n";
+      }
 
       if(i != 0){
         apply_pipe_input(prev_rd);
@@ -369,8 +369,8 @@ int main() {
               apply_redirection(ofname, efname);
         apply_append_redirection(oa_name, ea_name);
 
-          if(args[0] == "exit"){
-      break;
+    if(args[0] == "exit"){
+              break;
     }else if( args[0] == "echo"){
         // apply_redirection(ofname, efname);
         // apply_append_redirection(oa_name, ea_name);
