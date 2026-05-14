@@ -285,7 +285,8 @@ unordered_set<string> builtin_list = {
     "type",
     "exit",
     "pwd",
-    "cd"};
+    "cd",
+    "history"};
 
 unordered_set<string> executables;
 
@@ -387,7 +388,7 @@ int main()
 
   // TODO: Uncomment the code below to pass the first stage
   string og_command;
-  unordered_set<string> builtin_commands = {"echo", "type", "exit", "pwd", "cd"};
+  unordered_set<string> builtin_commands = {"echo", "type", "exit", "pwd", "cd", "history"};
 
   while (true)
   {
@@ -415,16 +416,11 @@ int main()
       string oa_name = parse_append(args);
       string ea_name = parse_error_append(args);
 
-      // if(i != 0){
-      //   apply_pipe_input(prev_rd);
 
-      // }
 
       if (i != pipe_tokenzied.size() - 1)
       {
         pipe(fd);
-        // prev_rd = fd[0];
-        // apply_pipe_redirection(fd[1]);
       }
 
       if (builtin_commands.count(args[0]))
@@ -538,13 +534,11 @@ int main()
           else
           {
             pids.push_back(pid);
-// Clean up old read end if we used it
             if (i != 0) close(prev_rd); 
             
-            // Prep the read end for the next iteration and CLOSE the write end
             if (i != pipe_tokenzied.size() - 1) {
                 prev_rd = fd[0]; 
-                close(fd[1]); // CRITICAL: So the next child receives EOF!
+                close(fd[1]); 
             }            
           }
         }
@@ -558,10 +552,6 @@ int main()
         }
 
       }
-
-      
-
-
   }
 
       for (auto &pid : pids)
