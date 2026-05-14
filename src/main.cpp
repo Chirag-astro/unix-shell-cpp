@@ -442,10 +442,10 @@ int main()
         {
           for (int i = 1; i < args.size(); i++)
           {
-            cout << args[i] << " ";
+            cout << args[i];
             if (i < args.size() - 1) {
-        cout << " ";
-    }
+                cout << " ";
+            }
           }
           cout << "\n";
         }
