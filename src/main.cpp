@@ -542,11 +542,15 @@ int main()
       }
 
       
-    for (auto &pid : pids)
+
+
+  }
+
+      for (auto &pid : pids)
     {
       waitpid(pid, nullptr, 0);
     }
     restore_redirection(o_saved, e_saved, i_saved);
+}
 
-  }
 }
