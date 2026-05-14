@@ -187,6 +187,16 @@ void restore_redirection(int o_saved, int e_saved, int i_saved){
     close(i_saved);
 }
 
+void restore_op_redirection(int o_saved){
+    dup2( o_saved, 1);
+    close(o_saved);
+}
+
+void restore_err_redirection( int e_saved){
+    dup2(e_saved, 2);
+    close(e_saved);
+}
+
 void restore_pipe_opr(int o_saved){
   dup2(o_saved,1);
   close(o_saved);
@@ -462,14 +472,20 @@ int main() {
            }
 
     }
-      if(i == pipe_tokenzied.size()-1)
-    restore_redirection(o_saved, e_saved, i_saved);
+      if(ofname || oa_name){
+        restore_op_redirection(o_saved);
+      }
+      if(efname || ea_name){
+        restore_err_redirection(e_saved);
+      }
 
     }
 
         for(auto &pid : pids){
       waitpid(pid, nullptr, 0);
     }
+    restore_redirection(o_saved, e_saved, i_saved);
+
 
 
 
