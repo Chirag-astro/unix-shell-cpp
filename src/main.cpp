@@ -528,6 +528,14 @@ int main()
           else
           {
             pids.push_back(pid);
+// Clean up old read end if we used it
+            if (i != 0) close(prev_rd); 
+            
+            // Prep the read end for the next iteration and CLOSE the write end
+            if (i != pipe_tokenzied.size() - 1) {
+                prev_rd = fd[0]; 
+                close(fd[1]); // CRITICAL: So the next child receives EOF!
+            }            
           }
         }
         else
