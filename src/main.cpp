@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 #include <dirent.h>
 
 using namespace std;
@@ -396,6 +397,9 @@ int main()
   while (true)
   {
     char *input = readline("$ ");
+    if(input && *input){
+    add_history(input);
+}
     og_command = string(input);
     free(input);
     if (og_command.empty())
