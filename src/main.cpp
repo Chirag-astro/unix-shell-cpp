@@ -501,7 +501,7 @@ int main()
             }
           }
         }else if(args[0] == "history"){
-          int limit = hist.size()
+          int limit = hist.size();
 
           if(args.back()[0] >= '1' && args.back()[0] <= '9' )
           limit = stoi(args.back());
