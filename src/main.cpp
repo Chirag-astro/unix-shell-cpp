@@ -13,6 +13,7 @@
 
 using namespace std;
 
+
 string is_exec(string cmd)
 {
 
@@ -378,6 +379,8 @@ void find_all_executables()
   }
 }
 
+vector<string>hist;
+
 int main()
 {
   // Flush after every std::cout / std:cerr
@@ -397,6 +400,8 @@ int main()
     free(input);
     if (og_command.empty())
       continue;
+    
+    hist.push_back(og_command);  
     vector<string> pipe_tokenzied = pipe_tokenizer(og_command);
 
     vector<pid_t> pids;
@@ -495,6 +500,12 @@ int main()
               cout << "cd: " << args[1] << ": No such file or directory\n";
             }
           }
+        }else if(args[0] == "history"){
+          for (int i = 0; i < hist.size(); i++)
+          {
+             cout <<  i+1 <<"  "<< hist[i]<<"\n";
+          }
+          
         }
         dup2(o_saved, 1);
         dup2(e_saved, 2);
