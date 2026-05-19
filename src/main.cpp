@@ -522,6 +522,7 @@ int main()
                   s.push_back(c);
                }
             }
+            continue;
           }
 
           int limit = hist.size();
