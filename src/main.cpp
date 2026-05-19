@@ -395,7 +395,7 @@ void write_history(string fname){
 }
 
 void append_history(string fname){
-  int fd = open(fname.c_str(), O_WRONLY| O_CREAT | O_APPEND, 0644);
+  int fd = open(fname.c_str(), O_APPEND, 0644);
 
   for (int i = 0; i < hist.size(); i++)
   {
