@@ -505,18 +505,34 @@ int main()
             }
           }
         }else if(args[0] == "history"){
+
+          if(args[1] == '-r'){
+            string fname = args[2];
+            int fd = open(fname.c_str(), O_RDONLY);
+            char c;
+            string s;
+
+            while (read(fd,&c, 1) > 0)
+            {
+               if(c == '\n')
+               {
+                  hist.push_back(s);
+                  s.clear();
+               }else{ 
+                  s.push_back(c);
+               }
+            }
+          }
+
           int limit = hist.size();
 
-          if(args.back()[0] >= '1' && args.back()[0] <= '9' )
-          limit = stoi(args.back());
-
+          if(args.size()==2 &&  args.back()[0] >= '1' && args.back()[0] <= '9' )
+              limit = stoi(args.back());
 
           for (int i = hist.size()-limit; i < hist.size(); i++)
           {
              cout <<  i+1 <<"  "<< hist[i]<<"\n";
           }
-
-        
           
         }
         dup2(o_saved, 1);
