@@ -522,6 +522,7 @@ int main()
                   s.push_back(c);
                }
             }
+            if(!s.empty())hist.push_back(s);
             continue;
           }
 
