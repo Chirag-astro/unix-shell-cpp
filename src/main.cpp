@@ -394,6 +394,18 @@ void write_history(string fname){
 
 }
 
+void write_history(string fname){
+  int fd = open(fname.c_str(), O_WRONLY| O_CREAT | O_APPEND, 0644);
+
+  for (int i = 0; i < hist.size(); i++)
+  {
+     string s = hist[i]+"\n";
+     write(fd, s.c_str(), s.size());
+  }
+  close(fd);
+
+}
+
 void read_history(string fname){
   int fd = open(fname.c_str(), O_RDONLY);
   char c;
@@ -538,6 +550,8 @@ int main()
               read_history(args[2]);
           }else if(args.size() > 2 && args[1] == "-w"){
               write_history(args[2]);
+          }else if(args.size() > 2 && args[1] == "-a"){
+              append_history(args[2]);
           }else{
 
           int limit = hist.size();
