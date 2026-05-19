@@ -506,7 +506,7 @@ int main()
           }
         }else if(args[0] == "history"){
 
-          if(args[1] == '-r'){
+          if(args[1] == "-r"){
             string fname = args[2];
             int fd = open(fname.c_str(), O_RDONLY);
             char c;
