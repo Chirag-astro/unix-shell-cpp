@@ -387,9 +387,6 @@ unordered_map<string,int>last_written;
 void write_history(string fname){
   int fd = open(fname.c_str(), O_WRONLY| O_CREAT | O_TRUNC, 0644);
 
-  int idx = -1;
-
-
   for (int i = 0; i < hist.size(); i++)
   {
      string s = hist[i]+"\n";
@@ -556,8 +553,9 @@ int main()
           }else if(args.size() > 2 && args[1] == "-w"){
               write_history(args[2]);
           }else if(args.size() > 2 && args[1] == "-a"){
-            last_written[args[2]] = hist.size();
               append_history(args[2]);
+            last_written[args[2]] = hist.size();
+
           }else{
 
           int limit = hist.size();
