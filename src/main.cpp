@@ -535,6 +535,7 @@ int main()
           {
              cout <<  i+1 <<"  "<< hist[i]<<"\n";
           }
+        }
           
         }
         dup2(o_saved, 1);

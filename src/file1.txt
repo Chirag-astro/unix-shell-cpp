@@ -1,0 +1,2 @@
+pwd
+history -w file1.txt
