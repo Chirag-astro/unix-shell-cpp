@@ -11,6 +11,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <dirent.h>
+#include<bits/stdc++.h>
 
 using namespace std;
 
@@ -381,9 +382,13 @@ void find_all_executables()
 }
 
 vector<string>hist;
+unordered_map<string,int>last_written;
 
 void write_history(string fname){
   int fd = open(fname.c_str(), O_WRONLY| O_CREAT | O_TRUNC, 0644);
+
+  int idx = -1;
+
 
   for (int i = 0; i < hist.size(); i++)
   {
@@ -395,9 +400,9 @@ void write_history(string fname){
 }
 
 void append_history(string fname){
-  int fd = open(fname.c_str(), O_APPEND, 0644);
+  int fd = open(fname.c_str(), O_WRONLY| O_CREAT | O_APPEND, 0644);
 
-  for (int i = 0; i < hist.size(); i++)
+  for (int i = last_written[fname]; i < hist.size(); i++)
   {
      string s = hist[i]+"\n";
      write(fd, s.c_str(), s.size());
@@ -551,6 +556,7 @@ int main()
           }else if(args.size() > 2 && args[1] == "-w"){
               write_history(args[2]);
           }else if(args.size() > 2 && args[1] == "-a"){
+            last_written[args[2]] = hist.size();
               append_history(args[2]);
           }else{
 
