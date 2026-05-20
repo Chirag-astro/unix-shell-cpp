@@ -462,8 +462,8 @@ int main()
   find_all_executables();
   rl_attempted_completion_function = command_completion;
   load_history();
-  string hist_path = getenv("HISTFILE");
-  last_written[hist_path] = hist.size();
+  // string hist_path = getenv("HISTFILE");
+  // last_written[hist_path] = hist.size();
 
 
   // TODO: Uncomment the code below to pass the first stage

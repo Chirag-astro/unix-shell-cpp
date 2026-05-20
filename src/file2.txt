@@ -1,2 +1,0 @@
-pwd
-history -w file2.txt
