@@ -425,7 +425,9 @@ void read_history(string fname){
 }
 
 void load_history(){
-  string path = getenv("HISTFILE");
+  char* hf = getenv("HISTFILE");
+  if(hf==nullptr)return;
+  string path(hf);
   int fd = open(path.c_str(),O_RDONLY);
 
   char c; 
@@ -443,7 +445,9 @@ void load_history(){
 }
 
 void write_history(){
-  string path = getenv("HISTFILE");
+  char* hf = getenv("HISTFILE");
+  if(hf==nullptr)return;
+  string path(hf);
   int fd = open(path.c_str(),O_WRONLY |O_CREAT | O_APPEND, 0644);
 
   for(int i  = last_written[path] ; i < hist.size();i++){
@@ -462,8 +466,12 @@ int main()
   find_all_executables();
   rl_attempted_completion_function = command_completion;
   load_history();
-  // string hist_path = getenv("HISTFILE");
-  // last_written[hist_path] = hist.size();
+  char* hf = getenv("HISTFILE");
+  string hist_path;
+  if(hf!=nullptr){
+    hist_path = hf;
+  }
+  last_written[hist_path] = hist.size();
 
 
   // TODO: Uncomment the code below to pass the first stage
@@ -517,7 +525,7 @@ int main()
 
         if (args[0] == "exit")
         {
-          // write_history();
+          write_history();
           
           exit(0);
         }
