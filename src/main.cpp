@@ -330,10 +330,33 @@ char *command_generator(const char *text, int state)
   return nullptr;
 }
 
+char *filename_generator(const char *text, int state){
+
+  static int index;
+  static vector<string> matches;  
+
+  if(state==0){
+    index = 0;
+    matches.clear();
+    string prefix(text);
+    find_all_files(prefix, matches);
+    if(matches.size()==1)matches[0] += " ";
+
+  }
+
+  if(index < matches.size()){
+    return strdup(matches[index++].c_str());
+  }
+  return nullptr;
+}
+
 char **command_completion(const char *text, int start, int end)
 {
 
   rl_attempted_completion_over = 1;
+  if(start > 0){
+    return rl_completion_matches(text, filename_generator);
+  }
 
   return rl_completion_matches(text, command_generator);
 }
@@ -379,6 +402,29 @@ void find_all_executables()
     }
     closedir(dp);
   }
+}
+
+
+void find_all_files( string pref, vector<string>&matches){
+
+  struct dirent *entry;
+  string pth = ".";
+  DIR *dp = opendir(pth.c_str());
+
+  if(dp == NULL){return;}
+
+  while((entry = readdir(dp)) != NULL){
+
+    string file = entry->d_name;
+    if(file == "." || file == "..")
+        continue;
+     
+        if(file.rfind(pref,0)== 0) matches.push_back(file);
+    
+
+  }
+  closedir(dp);
+
 }
 
 vector<string>hist;
