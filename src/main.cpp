@@ -332,9 +332,32 @@ char *command_generator(const char *text, int state)
 
 void find_all_files( string pref, vector<string>&matches){
 
+
+   string filen;
+   int idx = -1;
+   for (int i = pref.size()-1; i >= 0; i--)
+   {
+      if(pref[i]=='/'){
+           idx = i ;
+           break;
+        }
+      filen.push_back(pref[i]);
+   }
+   reverse(filen.begin(), filen.end());
+   string dir;
+   if(idx==-1){
+    dir.push_back('.');
+   }else{
+    for (int i = 0; i < idx; i++)
+    {
+       dir.push_back(pref[i]);
+    }
+    
+   }
+   
+
   struct dirent *entry;
-  string pth = ".";
-  DIR *dp = opendir(pth.c_str());
+  DIR *dp = opendir(dir.c_str());
 
   if(dp == NULL){return;}
 
@@ -344,7 +367,11 @@ void find_all_files( string pref, vector<string>&matches){
     if(file == "." || file == "..")
         continue;
      
-        if(file.rfind(pref,0)== 0) matches.push_back(file);
+        if(file.rfind(filen,0)== 0){
+            if(dir != "."){
+              file = dir + '/' + file;
+            }
+          matches.push_back( file);}
     
 
   }
