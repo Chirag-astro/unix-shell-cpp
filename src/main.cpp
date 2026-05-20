@@ -424,6 +424,36 @@ void read_history(string fname){
   close(fd);
 }
 
+void load_history(){
+  string path = getenv("HISTFILE");
+  int fd = open(path.c_str(),O_RDONLY);
+
+  char c; 
+  string s;
+  while(read(fd,&c,1) > 0){
+    if(c=='\n'){
+      hist.push_back(s);
+      s.clear();
+    }else{
+      s.push_back(c);
+    }
+  }
+  if(!s.empty())hist.push_back(s);
+  close(fd);
+}
+
+void write_history(){
+  string path = getenv("HISTFILE");
+  int fd = open(path.c_str(),O_WRONLY |O_CREAT | O_APPEND, 0644);
+
+  for(int i  = last_written[path] ; i < hist.size();i++){
+     string s = hist[i] + "\n";
+     write(fd,s.c_str(), s.size());
+  }
+
+  close(fd);
+}
+
 int main()
 {
   // Flush after every std::cout / std:cerr
@@ -431,6 +461,10 @@ int main()
   std::cerr << std::unitbuf;
   find_all_executables();
   rl_attempted_completion_function = command_completion;
+  load_history();
+  string hist_path = getenv("HISTFILE");
+  last_written[hist_path] = hist.size();
+
 
   // TODO: Uncomment the code below to pass the first stage
   string og_command;
@@ -483,6 +517,8 @@ int main()
 
         if (args[0] == "exit")
         {
+          write_history();
+          
           exit(0);
         }
         else if (args[0] == "echo")
