@@ -362,7 +362,7 @@ char *filename_generator(const char *text, int state){
     matches.clear();
     string prefix(text);
     find_all_files(prefix, matches);
-    if(matches.size()==1)matches[0] += " ";
+    // if(matches.size()==1)matches[0] += " ";
 
   }
 
