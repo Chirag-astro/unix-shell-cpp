@@ -517,7 +517,7 @@ int main()
 
         if (args[0] == "exit")
         {
-          write_history();
+          // write_history();
           
           exit(0);
         }
