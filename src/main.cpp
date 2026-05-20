@@ -330,6 +330,28 @@ char *command_generator(const char *text, int state)
   return nullptr;
 }
 
+void find_all_files( string pref, vector<string>&matches){
+
+  struct dirent *entry;
+  string pth = ".";
+  DIR *dp = opendir(pth.c_str());
+
+  if(dp == NULL){return;}
+
+  while((entry = readdir(dp)) != NULL){
+
+    string file = entry->d_name;
+    if(file == "." || file == "..")
+        continue;
+     
+        if(file.rfind(pref,0)== 0) matches.push_back(file);
+    
+
+  }
+  closedir(dp);
+
+}
+
 char *filename_generator(const char *text, int state){
 
   static int index;
@@ -405,27 +427,7 @@ void find_all_executables()
 }
 
 
-void find_all_files( string pref, vector<string>&matches){
 
-  struct dirent *entry;
-  string pth = ".";
-  DIR *dp = opendir(pth.c_str());
-
-  if(dp == NULL){return;}
-
-  while((entry = readdir(dp)) != NULL){
-
-    string file = entry->d_name;
-    if(file == "." || file == "..")
-        continue;
-     
-        if(file.rfind(pref,0)== 0) matches.push_back(file);
-    
-
-  }
-  closedir(dp);
-
-}
 
 vector<string>hist;
 unordered_map<string,int>last_written;
