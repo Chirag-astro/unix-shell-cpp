@@ -757,7 +757,7 @@ int main()
             pids.push_back(pid);
             else
              {
-               cout << "["<< job_id <<"] "<< pid;
+               cout << "["<< job_id <<"] "<< pid<<"\n";
                 job_id++;
              }
               
