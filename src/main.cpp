@@ -553,6 +553,8 @@ void write_history(){
   close(fd);
 }
 
+int job_id = 1;
+
 int main()
 {
   // Flush after every std::cout / std:cerr
@@ -709,7 +711,7 @@ int main()
         }
           
         }else if( args[0] == "jobs"){
-          
+
         }
         dup2(o_saved, 1);
         dup2(e_saved, 2);
@@ -720,6 +722,9 @@ int main()
         }
       }else{
 
+
+        bool bg_job = args.back() == "&";
+        if(bg_job)args.pop_back();
         string pth = is_exec(args[0]);
         vector<char *> c_args;
         for (auto &c : args)
@@ -748,7 +753,14 @@ int main()
           }
           else
           {
+            if(!bg_job)
             pids.push_back(pid);
+            else
+             {
+               cout << "["<< job_id <<"] "<< pid;
+                job_id++;
+             }
+              
             if (i != 0) close(prev_rd); 
             
             if (i != pipe_tokenzied.size() - 1) {
