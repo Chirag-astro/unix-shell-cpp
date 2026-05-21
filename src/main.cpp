@@ -374,7 +374,10 @@ void find_all_files( string pref, vector<string>&matches){
      
         if(file.rfind(filen,0)== 0){
               if(entry->d_type == DT_DIR){
-                  file = dir + '/' + file + '/';
+                  if(!dir.empty()){
+                      dir = dir + '/';
+                  }
+                  file = dir + file + '/';
               }else{
               file = dir + '/' + file;
             }
