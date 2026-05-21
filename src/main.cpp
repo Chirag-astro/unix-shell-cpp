@@ -15,6 +15,14 @@
 
 using namespace std;
 
+struct job{
+  int jobid;
+  pid_t pid;
+  string command;
+  string status;
+
+};
+
 
 string is_exec(string cmd)
 {
@@ -555,6 +563,8 @@ void write_history(){
 
 int job_id = 1;
 
+vector<job>job_lists;
+
 int main()
 {
   // Flush after every std::cout / std:cerr
@@ -712,6 +722,14 @@ int main()
           
         }else if( args[0] == "jobs"){
 
+          for (int i = 0; i < job_lists.size(); i++)
+          {
+              cout << "[" << job_lists[i].jobid << "]+ ";
+              cout << job_lists[i].status<<"                 ";
+              cout << job_lists[i].command<<"\n";
+          }
+          
+
         }
         dup2(o_saved, 1);
         dup2(e_saved, 2);
@@ -757,6 +775,8 @@ int main()
             pids.push_back(pid);
             else
              {
+              job j = {job_id, pid, og_command,"Running"};
+              job_lists.push_back(j);
                cout << "["<< job_id <<"] "<< pid<<"\n";
                 job_id++;
              }
