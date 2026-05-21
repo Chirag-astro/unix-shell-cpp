@@ -345,9 +345,8 @@ void find_all_files( string pref, vector<string>&matches){
    }
    reverse(filen.begin(), filen.end());
    string dir;
-   if(idx==-1){
-    dir.push_back('.');
-   }else{
+   if(idx!=-1){
+   
     for (int i = 0; i < idx; i++)
     {
        dir.push_back(pref[i]);
@@ -357,7 +356,13 @@ void find_all_files( string pref, vector<string>&matches){
    
 
   struct dirent *entry;
-  DIR *dp = opendir(dir.c_str());
+  DIR *dp;
+
+  if(!dir.empty()){
+    dp = opendir(dir.c_str());
+  }else{
+    dp = opendir(".");
+  }
 
   if(dp == NULL){return;}
 
@@ -370,7 +375,7 @@ void find_all_files( string pref, vector<string>&matches){
         if(file.rfind(filen,0)== 0){
               if(entry->d_type == DT_DIR){
                   file = dir + '/' + file + '/';
-              }else if(dir != "."){
+              }else{
               file = dir + '/' + file;
             }
           matches.push_back( file);}
