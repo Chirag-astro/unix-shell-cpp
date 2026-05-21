@@ -571,7 +571,7 @@ int main()
 
   // TODO: Uncomment the code below to pass the first stage
   string og_command;
-  unordered_set<string> builtin_commands = {"echo", "type", "exit", "pwd", "cd", "history"};
+  unordered_set<string> builtin_commands = {"echo", "type", "exit", "pwd", "cd", "history", "jobs"};
 
   while (true)
   {
@@ -707,6 +707,8 @@ int main()
              cout <<  i+1 <<"  "<< hist[i]<<"\n";
           }
         }
+          
+        }else if( args[0] == "jobs"){
           
         }
         dup2(o_saved, 1);
