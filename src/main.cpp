@@ -724,7 +724,14 @@ int main()
 
           for (int i = 0; i < job_lists.size(); i++)
           {
-              cout << "[" << job_lists[i].jobid << "]+ ";
+              cout << "[" << job_lists[i].jobid << "]";
+              if(i==job_lists.size()-1){
+                cout <<"+ ";
+              }else if(i== job_lists.size()-2){
+                cout <<"- ";
+              }else{
+                cout <<"  ";
+              }
               cout << job_lists[i].status<<"                 ";
               cout << job_lists[i].command<<"\n";
           }
