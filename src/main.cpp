@@ -726,6 +726,8 @@ int main()
 
           vector<int>remove_jobs;
 
+          int jbid = job_lists.size();
+
           for(auto j  : job_lists){
 
               int status;
@@ -742,34 +744,20 @@ int main()
               }
 
               cout << "[" << j.first << "]";
-              if(j.first==job_id-1){
+              if(jbid==1){
                 cout <<"+ ";
-              }else if(j.first== job_id-2){
+              }else if(jbid==2){
                 cout <<"- ";
               }else{
                 cout <<"  ";
               }
               cout << s<<"                 ";
               cout << cmd<<"\n";
+              jbid--;
 
           }
 
-          for(auto c : remove_jobs)job_lists.erase(c);
-
-          // for (int i = 0; i < job_lists.size(); i++)
-          // {
-          //     cout << "[" << job_lists[i].jobid << "]";
-          //     if(i==job_lists.size()-1){
-          //       cout <<"+ ";
-          //     }else if(i== job_lists.size()-2){
-          //       cout <<"- ";
-          //     }else{
-          //       cout <<"  ";
-          //     }
-          //     cout << job_lists[i].status<<"                 ";
-          //     cout << job_lists[i].command<<"\n";
-          // }
-          
+          for(auto c : remove_jobs)job_lists.erase(c);          
 
         }
         dup2(o_saved, 1);
