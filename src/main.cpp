@@ -728,11 +728,14 @@ int main()
 
           for(auto j  : job_lists){
 
-              int status = waitpid(j.second.pid, &status, WNOHANG);
+              int status;
+              pid_t ret = waitpid(j.second.pid, &status, WNOHANG);
 
-              if(status != 0){
+              string s = "Running";
+
+              if(ret == j.second.pid){
                 remove_jobs.push_back(j.first);
-                job_lists[j.first].status = "Done";
+                s  = "Done";
               }
 
               cout << "[" << j.first << "]";
@@ -743,7 +746,7 @@ int main()
               }else{
                 cout <<"  ";
               }
-              cout << j.second.status<<"                 ";
+              cout << s<<"                 ";
               cout << j.second.command<<"\n";
 
           }
