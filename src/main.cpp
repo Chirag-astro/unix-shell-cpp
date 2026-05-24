@@ -737,7 +737,7 @@ int main()
               if(ret == j.second.pid){
                 remove_jobs.push_back(j.first);
                 s  = "Done";
-                cmd.pop_back();
+                cmd.pop_back();cmd.pop_back();
                 
               }
 
@@ -750,7 +750,7 @@ int main()
                 cout <<"  ";
               }
               cout << s<<"                 ";
-              cout << j.second.command<<"\n";
+              cout << cmd<<"\n";
 
           }
 
