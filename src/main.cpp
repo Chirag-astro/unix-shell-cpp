@@ -563,7 +563,9 @@ void write_history(){
 
 int job_id = 1;
 
-vector<job>job_lists;
+// vector<job>job_lists;
+
+map<int,job>job_lists;
 
 int main()
 {
@@ -722,19 +724,45 @@ int main()
           
         }else if( args[0] == "jobs"){
 
-          for (int i = 0; i < job_lists.size(); i++)
-          {
-              cout << "[" << job_lists[i].jobid << "]";
-              if(i==job_lists.size()-1){
+          vector<int>remove_jobs;
+
+          for(auto j  : job_lists){
+
+              int status = waitpid(j.second.pid, &status, WNOHANG);
+
+              if(status != 0){
+                remove_jobs.push_back(j.first);
+                job_lists[j.first].status = "Done";
+              }
+
+              cout << "[" << j.first << "]";
+              if(j.first==job_id-1){
                 cout <<"+ ";
-              }else if(i== job_lists.size()-2){
+              }else if(j.first== job_id-2){
                 cout <<"- ";
               }else{
                 cout <<"  ";
               }
-              cout << job_lists[i].status<<"                 ";
-              cout << job_lists[i].command<<"\n";
+              cout << j.second.status<<"                 ";
+              cout << j.second.command<<"\n";
+
           }
+
+          for(auto c : remove_jobs)job_lists.erase(c);
+
+          // for (int i = 0; i < job_lists.size(); i++)
+          // {
+          //     cout << "[" << job_lists[i].jobid << "]";
+          //     if(i==job_lists.size()-1){
+          //       cout <<"+ ";
+          //     }else if(i== job_lists.size()-2){
+          //       cout <<"- ";
+          //     }else{
+          //       cout <<"  ";
+          //     }
+          //     cout << job_lists[i].status<<"                 ";
+          //     cout << job_lists[i].command<<"\n";
+          // }
           
 
         }
@@ -783,7 +811,8 @@ int main()
             else
              {
               job j = {job_id, pid, og_command,"Running"};
-              job_lists.push_back(j);
+              job_lists[job_id] = j; 
+              // job_lists.push_back(j);
                cout << "["<< job_id <<"] "<< pid<<"\n";
                 job_id++;
              }
