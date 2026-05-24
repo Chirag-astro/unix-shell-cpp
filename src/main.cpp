@@ -732,10 +732,13 @@ int main()
               pid_t ret = waitpid(j.second.pid, &status, WNOHANG);
 
               string s = "Running";
+              string cmd= j.second.command;
 
               if(ret == j.second.pid){
                 remove_jobs.push_back(j.first);
                 s  = "Done";
+                cmd.pop_back();
+                
               }
 
               cout << "[" << j.first << "]";
