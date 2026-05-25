@@ -603,8 +603,7 @@ void updated_jobs(){
 }
 
 int job_id = 1;
-
-// vector<job>job_lists;
+unordered_map<string,string>completion_paths;
 
 
 int main()
@@ -804,7 +803,19 @@ int main()
 
         }else if(args[0]== "complete"){
            if(args[1] == "-p"){
+                if(completion_paths.find(args[2])!= completion_paths.end()){
+                    cout << completion_paths[args[2]] <<"\n";
+                }else{
                cout <<"complete: "<< args[2] <<": no completion specification\n";
+                }
+           }else if(args[1] == "-C"){
+               string cmd;
+               for(auto c : args){
+                  for(auto x : c)cmd.push_back(x);
+                  cmd.push_back(' ');
+               }
+               cmd.pop_back();
+               completion_paths[args.back()] = cmd;
            }
         }
         dup2(o_saved, 1);
