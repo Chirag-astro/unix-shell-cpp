@@ -802,6 +802,10 @@ int main()
 
           for(auto c : remove_jobs){pq.push(c);job_lists.erase(c);}  
 
+        }else if(args[0]== "complete"){
+           if(args[1] == "-p"){
+               cout <<"complete: git: no completion specification\n";
+           }
         }
         dup2(o_saved, 1);
         dup2(e_saved, 2);
