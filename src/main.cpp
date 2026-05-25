@@ -436,7 +436,6 @@ void find_all_external_completions(string cmd, vector<string>&matches){
       return;
     }
 
-
     string path = completion_paths[cmd];
     vector<char *> c_args;
     char* strng = (char*)path.c_str();
@@ -506,8 +505,8 @@ char **command_completion(const char *text, int start, int end)
   rl_attempted_completion_over = 1;
 
 
-  if(start > 0){
-    return rl_completion_matches(text, filename_generator);
+  if(start == 0){
+    return rl_completion_matches(text, command_generator);
   }
 
   string line = rl_line_buffer;
@@ -521,7 +520,7 @@ char **command_completion(const char *text, int start, int end)
     return rl_completion_matches(text, external_completion_generator);
   }
 
-  return rl_completion_matches(text, command_generator);
+  return rl_completion_matches(text, filename_generator);
 }
 
 void find_all_executables()
