@@ -625,7 +625,7 @@ int main()
 
   // TODO: Uncomment the code below to pass the first stage
   string og_command;
-  unordered_set<string> builtin_commands = {"echo", "type", "exit", "pwd", "cd", "history", "jobs"};
+  unordered_set<string> builtin_commands = {"echo", "type", "exit", "pwd", "cd", "history", "jobs", "complete"};
 
   while (true)
   {
