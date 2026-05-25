@@ -561,6 +561,45 @@ void write_history(){
   close(fd);
 }
 
+void updated_jobs(){
+
+              vector<int>remove_jobs;
+
+          int jbid = job_lists.size();
+
+          for(auto j  : job_lists){
+
+              int status;
+              pid_t ret = waitpid(j.second.pid, &status, WNOHANG);
+
+              string s = "Running";
+              string cmd= j.second.command;
+
+              if(ret == j.second.pid){
+                remove_jobs.push_back(j.first);
+                s  = "Done";
+                cmd.pop_back();cmd.pop_back();
+                cout << "[" << j.first << "]";
+                if(jbid==1){
+                  cout <<"+ ";
+                }else if(jbid==2){
+                  cout <<"- ";
+                }else{
+                  cout <<"  ";
+                }
+                cout << s<<"                 ";
+                cout << cmd<<"\n";
+                jbid--;
+              }
+
+
+
+          }
+
+          for(auto c : remove_jobs)job_lists.erase(c);  
+
+}
+
 int job_id = 1;
 
 // vector<job>job_lists;
@@ -589,6 +628,9 @@ int main()
 
   while (true)
   {
+
+    updated_jobs();
+
     char *input = readline("$ ");
     if(input && *input){
     add_history(input);
@@ -757,7 +799,7 @@ int main()
 
           }
 
-          for(auto c : remove_jobs)job_lists.erase(c);          
+          for(auto c : remove_jobs)job_lists.erase(c);  
 
         }
         dup2(o_saved, 1);
