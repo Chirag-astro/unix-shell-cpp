@@ -810,11 +810,14 @@ int main()
                 }
            }else if(args[1] == "-C"){
                string cmd;
-               for(auto c : args){
-                  for(auto x : c)cmd.push_back(x);
-                  cmd.push_back(' ');
-               }
-               cmd.pop_back();
+                for(auto c : args[0])cmd.push_back(c);
+                cmd.push_back(' ');
+                for(auto c : args[1])cmd.push_back(c);
+                cmd.push_back(' ');
+                cmd.push_back('\'');
+                for(auto c : args[2] )cmd.push_back(c);
+                cmd.push_back('\' ');
+                for(auto c : args[3])cmd.push_back(c);
                completion_paths[args.back()] = cmd;
            }
         }
