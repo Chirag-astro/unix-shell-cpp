@@ -432,6 +432,9 @@ char *filename_generator(const char *text, int state){
 
 string current_completion_cmd;
 
+string prev_arg;
+string current_arg;
+
 void find_all_external_completions(
     string cmd,
     vector<string>& matches)
@@ -457,6 +460,10 @@ void find_all_external_completions(
     vector<char*> c_args;
 
     c_args.push_back((char*)path.c_str());
+    c_args.push_back((char*)current_completion_cmd.c_str());
+    c_args.push_back((char*)current_arg.c_str());
+    c_args.push_back((char*)prev_arg.c_str());
+    
     c_args.push_back(nullptr);
 
     int fd[2];
@@ -516,6 +523,8 @@ char *external_completion_generator(
     const char *text,
     int state)
 {
+
+    current_arg = string(text);
     static int index;
 
     static vector<string> matches;
@@ -557,17 +566,6 @@ char **command_completion(
         );
     }
 
-    current_completion_cmd.clear();
-
-    string line = rl_line_buffer;
-
-    for(auto c : line)
-    {
-        if(c == ' ')
-            break;
-
-        current_completion_cmd.push_back(c);
-    }
 
     if(completion_paths.find(
         current_completion_cmd)
@@ -800,6 +798,8 @@ int main()
 
       string command = pipe_tokenzied[i];
       vector<string> args = tokenize(command);
+      current_completion_cmd = args[0];
+      if(args.size()>=2) prev_arg = args[args.size()-2];
       int fd[2];
       string ofname = parse_redirection(args);
       string efname = parse_err_redirection(args);
