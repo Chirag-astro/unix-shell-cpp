@@ -430,97 +430,149 @@ char *filename_generator(const char *text, int state){
   return nullptr;
 }
 
-void find_all_external_completions(string cmd, vector<string>&matches){
+string current_completion_cmd;
 
-    if(completion_paths.find(cmd) == completion_paths.end()){
-      return;
+void find_all_external_completions(
+    string cmd,
+    vector<string>& matches)
+{
+    if(completion_paths.find(cmd)
+        == completion_paths.end())
+    {
+        return;
     }
 
     string path = completion_paths[cmd];
-    vector<char *> c_args;
-    char* strng = (char*)path.c_str();
-    c_args.push_back(strng);
+
+    vector<char*> c_args;
+
+    c_args.push_back((char*)path.c_str());
     c_args.push_back(nullptr);
+
     int fd[2];
+
     pipe(fd);
+
     pid_t pid = fork();
 
-    if(pid == 0 ){
-      close(fd[0]);
-      dup2(fd[1],1);
-      execvp(path.c_str(),&c_args[0] );
-      perror("execvp");
-      exit(1);
-    }else{
-      close(fd[1]);
-      char c;
-      string op;
-      while(read(fd[0], &c, 1) > 0){
-        if(c == '\n'){
-          matches.push_back(op);
-          op.clear();
-        }else{
-         op.push_back(c);
+    if(pid == 0)
+    {
+        close(fd[0]);
 
+        dup2(fd[1], STDOUT_FILENO);
+
+        close(fd[1]);
+
+        execvp(path.c_str(), &c_args[0]);
+
+        perror("execvp");
+
+        exit(1);
+    }
+    else
+    {
+        close(fd[1]);
+
+        char c;
+
+        string op;
+
+        while(read(fd[0], &c, 1) > 0)
+        {
+            if(c == '\n')
+            {
+                matches.push_back(op);
+
+                op.clear();
+            }
+            else
+            {
+                op.push_back(c);
+            }
         }
-      }
-      if(!op.empty())matches.push_back(op);
-      waitpid(pid, nullptr, 0);
+
+        if(!op.empty())
+        {
+            matches.push_back(op);
+        }
+
+        close(fd[0]);
+
+        waitpid(pid, nullptr, 0);
+    }
+}
+
+char *external_completion_generator(
+    const char *text,
+    int state)
+{
+    static int index;
+
+    static vector<string> matches;
+
+    if(state == 0)
+    {
+        index = 0;
+
+        matches.clear();
+
+        find_all_external_completions(
+            current_completion_cmd,
+            matches
+        );
     }
 
+    if(index < matches.size())
+    {
+        return strdup(
+            matches[index++].c_str()
+        );
+    }
 
-
+    return nullptr;
 }
 
-char *external_completion_generator( const char *text, int state){
-
-  static int index;
-  static vector<string>matches;
-  string line = rl_line_buffer;
-  string cmd;
-  for(auto c : line){
-    if(c == ' ')break;
-    cmd.push_back(c);
-  }
-
-  if(state == 0){
-    index  = 0;
-    matches.clear();
-    string prefix(text);
-    find_all_external_completions(cmd ,matches);
-  }
-
-    if (index < matches.size())
-  {
-    return strdup(matches[index++].c_str());
-  }
-
-  return nullptr;
-
-}
-
-char **command_completion(const char *text, int start, int end)
+char **command_completion(
+    const char *text,
+    int start,
+    int end)
 {
+    rl_attempted_completion_over = 1;
 
-  rl_attempted_completion_over = 1;
+    if(start == 0)
+    {
+        return rl_completion_matches(
+            text,
+            command_generator
+        );
+    }
 
+    current_completion_cmd.clear();
 
-  if(start == 0){
-    return rl_completion_matches(text, command_generator);
-  }
+    string line = rl_line_buffer;
 
-  string line = rl_line_buffer;
-  string cmd;
-  for(auto c : line){
-    if(c == ' ')break;
-    cmd.push_back(c);
-  }
+    for(auto c : line)
+    {
+        if(c == ' ')
+            break;
 
-  if(completion_paths.find(cmd) != completion_paths.end()){
-    return rl_completion_matches(text, external_completion_generator);
-  }
+        current_completion_cmd.push_back(c);
+    }
 
-  return rl_completion_matches(text, filename_generator);
+    if(completion_paths.find(
+        current_completion_cmd)
+        != completion_paths.end())
+    {
+        return rl_completion_matches(
+            text,
+            external_completion_generator
+        );
+    }
+
+    return rl_completion_matches(
+        text,
+        filename_generator
+    );
 }
 
 void find_all_executables()
