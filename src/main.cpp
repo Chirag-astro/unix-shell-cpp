@@ -561,6 +561,9 @@ void write_history(){
   close(fd);
 }
 
+map<int,job>job_lists;
+
+
 void updated_jobs(){
 
               vector<int>remove_jobs;
@@ -604,7 +607,6 @@ int job_id = 1;
 
 // vector<job>job_lists;
 
-map<int,job>job_lists;
 
 int main()
 {
