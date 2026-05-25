@@ -592,8 +592,9 @@ void updated_jobs(){
                 }
                 cout << s<<"                 ";
                 cout << cmd<<"\n";
-                jbid--;
               }
+                jbid--;
+
 
 
 
