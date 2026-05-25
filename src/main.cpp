@@ -598,7 +598,7 @@ void updated_jobs(){
 
     }
 
-    for(auto c : remove_jobs)job_lists.erase(c);  
+    for(auto c : remove_jobs){pq.push(c);job_lists.erase(c);}  
 
 }
 
@@ -800,7 +800,7 @@ int main()
 
           }
 
-          for(auto c : remove_jobs)job_lists.erase(c);  
+          for(auto c : remove_jobs){pq.push(c);job_lists.erase(c);}  
 
         }
         dup2(o_saved, 1);
