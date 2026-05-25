@@ -816,7 +816,8 @@ int main()
                 cmd.push_back(' ');
                 cmd.push_back('\'');
                 for(auto c : args[2] )cmd.push_back(c);
-                cmd.push_back('\' ');
+                cmd.push_back('\'');
+                cmd.push_back(' ');
                 for(auto c : args[3])cmd.push_back(c);
                completion_paths[args.back()] = cmd;
            }
