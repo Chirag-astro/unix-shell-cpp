@@ -451,7 +451,7 @@ void find_all_external_completions(
         cnt++;
        }
        if(cnt==2)break;
-       if(cnt)path.push_back(c);
+       if(cnt && c!= '\'')path.push_back(c);
     }
 
     vector<char*> c_args;
