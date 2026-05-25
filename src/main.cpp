@@ -23,6 +23,9 @@ struct job{
 
 };
 
+unordered_map<string,string>completion_paths;
+
+
 
 string is_exec(string cmd)
 {
@@ -427,12 +430,95 @@ char *filename_generator(const char *text, int state){
   return nullptr;
 }
 
+void find_all_external_completions(string cmd, vector<string>&matches){
+
+    if(completion_paths.find(cmd) == completion_paths.end()){
+      return;
+    }
+
+
+    string path = completion_paths[cmd];
+    vector<char *> c_args;
+    char* strng = (char*)path.c_str();
+    c_args.push_back(strng);
+    c_args.push_back(nullptr);
+    int fd[2];
+    pipe(fd);
+    pid_t pid = fork();
+
+    if(pid == 0 ){
+      close(fd[0]);
+      dup2(fd[1],1);
+      execvp(path.c_str(),&c_args[0] );
+      perror("execvp");
+      exit(1);
+    }else{
+      close(fd[1]);
+      char c;
+      string op;
+      while(read(fd[0], &c, 1) > 0){
+        if(c == '\n'){
+          matches.push_back(op);
+          op.clear();
+        }else{
+         op.push_back(c);
+
+        }
+      }
+      if(!op.empty())matches.push_back(op);
+      waitpid(pid, nullptr, 0);
+    }
+
+
+
+}
+
+char *external_completion_generator( const char *text, int state){
+
+  static int index;
+  static vector<string>matches;
+  string line = rl_line_buffer;
+  string cmd;
+  for(auto c : line){
+    if(c == ' ')break;
+    cmd.push_back(c);
+  }
+
+  if(state == 0){
+    index  = 0;
+    matches.clear();
+    string prefix(text);
+    find_all_external_completions(cmd ,matches);
+  }
+
+    if (index < matches.size())
+  {
+    return strdup(matches[index++].c_str());
+  }
+
+  return nullptr;
+
+}
+
 char **command_completion(const char *text, int start, int end)
 {
 
   rl_attempted_completion_over = 1;
+
+
   if(start > 0){
     return rl_completion_matches(text, filename_generator);
+  }
+
+  string line = rl_line_buffer;
+  string cmd;
+  for(auto c : line){
+    if(c == ' ')break;
+    cmd.push_back(c);
+  }
+
+  if(completion_paths.find(cmd) != completion_paths.end()){
+    return rl_completion_matches(text, external_completion_generator);
   }
 
   return rl_completion_matches(text, command_generator);
@@ -603,7 +689,6 @@ void updated_jobs(){
 }
 
 int job_id = 1;
-unordered_map<string,string>completion_paths;
 
 
 int main()
