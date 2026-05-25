@@ -442,7 +442,17 @@ void find_all_external_completions(
         return;
     }
 
-    string path = completion_paths[cmd];
+    string command = completion_paths[cmd];
+    string path;
+    int cnt = 0;
+
+    for(auto c : command){
+       if(c== '\''){
+        cnt++;
+       }
+       if(cnt==2)break;
+       if(cnt)path.push_back(c);
+    }
 
     vector<char*> c_args;
 
