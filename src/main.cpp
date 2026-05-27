@@ -800,6 +800,20 @@ void declare_variable(string s)
     cout << "declare: " << "`" << s << "'" <<": not a valid identifier\n";
   }
 
+void expand_variables(vector<string>&args){
+  for (int i = 0; i < args.size(); i++)
+  {
+    if (args[i][0] == '$')
+    {
+      string s = args[i].substr(1, args[i].length() - 1);
+      if (declared_vars.find(s) != declared_vars.end())
+      {
+        args[i] = declared_vars[s];
+      }
+    }
+  }
+}  
+
 int job_id = 1;
 
 
@@ -851,6 +865,9 @@ int main()
 
       string command = pipe_tokenzied[i];
       vector<string> args = tokenize(command);
+
+      expand_variables(args);
+
       int fd[2];
       string ofname = parse_redirection(args);
       string efname = parse_err_redirection(args);
