@@ -833,6 +833,7 @@ void expand_variables(vector<string>&args){
             tmp.clear();
      
        }
+       args[i] = s;
   }
 }  
 
