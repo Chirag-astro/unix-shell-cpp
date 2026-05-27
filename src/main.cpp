@@ -800,42 +800,81 @@ void declare_variable(string s)
     cout << "declare: " << "`" << s << "'" <<": not a valid identifier\n";
   }
 
-void expand_variables(vector<string>&args){
-  for (int i = 0; i < args.size(); i++)
-  {
-     string s;
-     string tmp;
+// void expand_variables(vector<string>&args){
+//   for (int i = 0; i < args.size(); i++)
+//   {
+//      string s;
+//      string tmp;
 
-     for (int j = 0; j < args[i].size(); j++)
-     {
-         if(args[i][j] == '$'){
-          if(tmp.empty())continue;
-            if (declared_vars.find(tmp) != declared_vars.end())
-            {
-                for(auto c : declared_vars[tmp])s.push_back(c);
-            }else{
-              for(auto c : tmp)s.push_back(c);
-            }
-            tmp.clear();
+//      for (int j = 0; j < args[i].size(); j++)
+//      {
+//          if(args[i][j] == '$'){
+//           if(tmp.empty())continue;
+//             if (declared_vars.find(tmp) != declared_vars.end())
+//             {
+//                 for(auto c : declared_vars[tmp])s.push_back(c);
+//             }else{
+//               for(auto c : tmp)s.push_back(c);
+//             }
+//             tmp.clear();
                           
 
-         }else{
-          tmp.push_back(args[i][j]);
-         }
-     }
-       if(!tmp.empty()){
-            if (declared_vars.find(tmp) != declared_vars.end())
-            {
-                for(auto c : declared_vars[tmp])s.push_back(c);
-            }else{
-              for(auto c : tmp)s.push_back(c);
-            }
-            tmp.clear();
+//          }else{
+//           tmp.push_back(args[i][j]);
+//          }
+//      }
+//        if(!tmp.empty()){
+//             if (declared_vars.find(tmp) != declared_vars.end())
+//             {
+//                 for(auto c : declared_vars[tmp])s.push_back(c);
+//             }else{
+//               for(auto c : tmp)s.push_back(c);
+//             }
+//             tmp.clear();
      
-       }
-       args[i] = s;
-  }
-}  
+//        }
+//        args[i] = s;
+//   }
+// }  
+
+void expand_variables(vector<string>& args)
+{
+    for(string &arg : args)
+    {
+        string result;
+
+        for(int i = 0; i < arg.size(); )
+        {
+            if(arg[i] == '$')
+            {
+                i++;
+
+                string var;
+
+                while(i < arg.size() &&
+                     (isalnum(arg[i]) ||
+                      arg[i] == '_'))
+                {
+                    var.push_back(arg[i]);
+                    i++;
+                }
+
+                if(declared_vars.find(var)
+                    != declared_vars.end())
+                {
+                    result += declared_vars[var];
+                }
+            }
+            else
+            {
+                result.push_back(arg[i]);
+                i++;
+            }
+        }
+
+        arg = result;
+    }
+}
 
 int job_id = 1;
 
