@@ -848,10 +848,15 @@ void expand_variables(vector<string>& args)
             if(arg[i] == '$')
             {
                 i++;
+                bool braces=false;
+                if(i+1 < arg.size() && arg[i+1]=='{'){
+                  braces=true;
+                  i++;
+                }
 
                 string var;
 
-                while(i < arg.size() &&
+                while(i < arg.size() && ( braces && arg[i] != '}') &&
                      (isalnum(arg[i]) ||
                       arg[i] == '_'))
                 {
