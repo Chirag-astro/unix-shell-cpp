@@ -431,7 +431,6 @@ char *filename_generator(const char *text, int state){
 }
 
 string current_completion_cmd;
-
 string prev_arg;
 string current_arg;
 
@@ -565,6 +564,13 @@ char **command_completion(
             command_generator
         );
     }
+
+    string cur_cmd = rl_line_buffer;
+    vector<string>v = tokenize(cur_cmd);
+
+    current_completion_cmd = v[0];
+    prev_arg = v[v.size()-2];
+    current_arg = v.back();
 
 
     if(completion_paths.find(
@@ -798,8 +804,6 @@ int main()
 
       string command = pipe_tokenzied[i];
       vector<string> args = tokenize(command);
-      current_completion_cmd = args[0];
-      if(args.size()>=2) prev_arg = args[args.size()-2];
       int fd[2];
       string ofname = parse_redirection(args);
       string efname = parse_err_redirection(args);
