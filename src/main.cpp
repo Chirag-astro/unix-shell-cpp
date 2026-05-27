@@ -784,6 +784,7 @@ int main()
   // TODO: Uncomment the code below to pass the first stage
   string og_command;
   unordered_set<string> builtin_commands = {"echo", "type", "exit", "pwd", "cd", "history", "jobs", "complete", "declare"};
+  map<string,string>declared_vars;
 
   while (true)
   {
@@ -984,9 +985,31 @@ int main()
               completion_paths.erase(completion_paths.find(cmd));
            }
         }else if(args[0] == "declare"){
+
+          if(args.size()==2){
+            string s = args[1];
+            string var;
+            string val;
+            for(auto c: s){
+              if(c == '='){
+                var = val;
+                val.clear();
+              }else{
+                val.push_back(c);
+              }
+            }
+            declared_vars[var] = val;
+          }else{
+
           if(args[1] == "-p"){
+            if(declared_vars.find(args[2])!= declared_vars.end()){
+                cout <<"declare -- "<< args[2]<<"="<< "\"" <<declared_vars[args[2]]<< "\""<<"\n";
+            }else{
             cout << "declare: "<< args[2]<<": not found\n";
+            }
           }
+
+        }
         }
         dup2(o_saved, 1);
         dup2(e_saved, 2);
