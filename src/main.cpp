@@ -861,6 +861,7 @@ void expand_variables(vector<string>& args)
                     var.push_back(arg[i]);
                     i++;
                 }
+                if(i < arg.size() && arg[i]=='}')i++;
 
                 if(declared_vars.find(var)
                     != declared_vars.end())
