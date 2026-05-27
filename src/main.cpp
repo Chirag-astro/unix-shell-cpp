@@ -295,13 +295,7 @@ void apply_pipe_input(int fd0)
   close(fd0);
 }
 
-unordered_set<string> builtin_list = {
-    "echo",
-    "type",
-    "exit",
-    "pwd",
-    "cd",
-    "history"};
+unordered_set<string> builtin_list = {"echo", "type", "exit", "pwd", "cd", "history", "jobs", "complete", "declare"};
 
 unordered_set<string> executables;
 
@@ -789,7 +783,7 @@ int main()
 
   // TODO: Uncomment the code below to pass the first stage
   string og_command;
-  unordered_set<string> builtin_commands = {"echo", "type", "exit", "pwd", "cd", "history", "jobs", "complete"};
+  unordered_set<string> builtin_commands = {"echo", "type", "exit", "pwd", "cd", "history", "jobs", "complete", "declare"};
 
   while (true)
   {
