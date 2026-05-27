@@ -588,9 +588,6 @@ char **command_completion(
 
     }
 
-
-
-
     if(completion_paths.find(
         current_completion_cmd)
         != completion_paths.end())
@@ -988,6 +985,9 @@ int main()
                 cmd.push_back(' ');
                 for(auto c : args[3])cmd.push_back(c);
                completion_paths[args.back()] = cmd;
+           }else if(args[1] == "-r"){
+              string cmd = args[2];
+              completion_paths.erase(completion_paths.find(cmd));
            }
         }
         dup2(o_saved, 1);
