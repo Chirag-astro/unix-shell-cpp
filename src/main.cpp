@@ -803,14 +803,35 @@ void declare_variable(string s)
 void expand_variables(vector<string>&args){
   for (int i = 0; i < args.size(); i++)
   {
-    if (args[i][0] == '$')
-    {
-      string s = args[i].substr(1, args[i].length() - 1);
-      if (declared_vars.find(s) != declared_vars.end())
-      {
-        args[i] = declared_vars[s];
-      }
-    }
+     string s;
+     string tmp;
+
+     for (int j = 0; j < args[i].size(); j++)
+     {
+         if(args[i][j] == '$'){
+            if (declared_vars.find(tmp) != declared_vars.end())
+            {
+                for(auto c : declared_vars[tmp])s.push_back(c);
+            }else{
+              for(auto c : tmp)s.push_back(c);
+            }
+            tmp.clear();
+                          
+
+         }else{
+          tmp.push_back(args[i][j]);
+         }
+     }
+       if(!tmp.empty()){
+            if (declared_vars.find(tmp) != declared_vars.end())
+            {
+                for(auto c : declared_vars[tmp])s.push_back(c);
+            }else{
+              for(auto c : tmp)s.push_back(c);
+            }
+            tmp.clear();
+     
+       }
   }
 }  
 
