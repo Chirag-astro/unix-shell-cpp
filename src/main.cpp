@@ -761,6 +761,44 @@ void updated_jobs(){
     for(auto c : remove_jobs){pq.push(c);job_lists.erase(c);}  
 
 }
+  map<string,string>declared_vars;
+
+void declare_variable(string s)
+{
+   
+    string var;
+    string val;
+    for (auto c : s){
+      if(c == '='){
+        var = val;
+        val.clear();
+      }
+      else
+      {
+        val.push_back(c);
+      }
+    }
+
+    bool valid = true;
+
+    for (int i = 0; i < var.size(); i++)
+    {
+       if(i==0){
+        if(var[0] != '_' && !isalpha(var[0])){
+          valid = false; break;
+        }
+       }else{
+          if( var[i]!= '_' && !isalnum(var[i])){
+            valid=false; break;
+          }
+       }
+    }
+    
+    if(valid)
+    declared_vars[var] = val;
+    else
+    cout << "declare: " << "'" << s << "'" <<": not a valid identifier\n";
+  }
 
 int job_id = 1;
 
@@ -784,7 +822,6 @@ int main()
   // TODO: Uncomment the code below to pass the first stage
   string og_command;
   unordered_set<string> builtin_commands = {"echo", "type", "exit", "pwd", "cd", "history", "jobs", "complete", "declare"};
-  map<string,string>declared_vars;
 
   while (true)
   {
@@ -987,18 +1024,9 @@ int main()
         }else if(args[0] == "declare"){
 
           if(args.size()==2){
-            string s = args[1];
-            string var;
-            string val;
-            for(auto c: s){
-              if(c == '='){
-                var = val;
-                val.clear();
-              }else{
-                val.push_back(c);
-              }
-            }
-            declared_vars[var] = val;
+
+            declare_variable(args[1]);
+
           }else{
 
           if(args[1] == "-p"){
