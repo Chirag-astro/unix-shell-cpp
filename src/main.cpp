@@ -983,6 +983,10 @@ int main()
               string cmd = args[2];
               completion_paths.erase(completion_paths.find(cmd));
            }
+        }else if(args[0] == "declare"){
+          if(args[1] == "-p"){
+            cout << "declare: "<< args[2]<<": not found\n";
+          }
         }
         dup2(o_saved, 1);
         dup2(e_saved, 2);
