@@ -584,12 +584,11 @@ char **command_completion(
     if(!v.empty())
     {
         current_completion_cmd = v[0];
+        prev_arg = v.back();
+
     }
 
-    if(v.size() >= 2)
-    {
-        prev_arg = v.back();
-    }    
+
 
 
     if(completion_paths.find(
