@@ -857,8 +857,8 @@ void expand_variables(vector<string>& args)
                 string var;
 
                 while(i < arg.size() && 
-                     ((isalnum(arg[i]) ||
-                      arg[i] == '_')) || (( braces && arg[i] != '}') ))
+                     (((isalnum(arg[i]) ||
+                      arg[i] == '_')) || (( braces && arg[i] != '}') )))
                 {
                     var.push_back(arg[i]);
                     i++;
