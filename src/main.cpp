@@ -796,8 +796,8 @@ void declare_variable(string s)
     
     if(valid)
     declared_vars[var] = val;
-    else
-    cout << "declare: " << "'" << s << "'" <<": not a valid identifier\n";
+    
+    // cout << "declare: " << "'" << s << "'" <<": not a valid identifier\n";
   }
 
 int job_id = 1;
