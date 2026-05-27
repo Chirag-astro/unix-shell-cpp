@@ -809,6 +809,7 @@ void expand_variables(vector<string>&args){
      for (int j = 0; j < args[i].size(); j++)
      {
          if(args[i][j] == '$'){
+          if(tmp.empty())continue;
             if (declared_vars.find(tmp) != declared_vars.end())
             {
                 for(auto c : declared_vars[tmp])s.push_back(c);
