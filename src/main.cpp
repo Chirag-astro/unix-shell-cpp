@@ -565,12 +565,25 @@ char **command_completion(
         );
     }
 
-    string cur_cmd = rl_line_buffer;
-    vector<string>v = tokenize(cur_cmd);
+    string before_cursor(
+        rl_line_buffer,
+        start
+    );
+    vector<string>v = tokenize(before_cursor);
 
-    current_completion_cmd = v[0];
-    prev_arg = v[v.size()-2];
-    current_arg = v.back();
+    current_completion_cmd = "";
+    prev_arg = "";
+    current_arg = string(text);
+
+    if(!v.empty())
+    {
+        current_completion_cmd = v[0];
+    }
+
+    if(v.size() >= 2)
+    {
+        prev_arg = v.back();
+    }    
 
 
     if(completion_paths.find(
