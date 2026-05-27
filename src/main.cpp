@@ -839,6 +839,7 @@ void declare_variable(string s)
 
 void expand_variables(vector<string>& args)
 {
+  vector<string>n_args;
     for(string &arg : args)
     {
         string result;
@@ -876,8 +877,9 @@ void expand_variables(vector<string>& args)
             }
         }
         if(!result.empty())
-        arg = result;
+        n_args.push_back(result);
     }
+    args = n_args;
 }
 
 int job_id = 1;
