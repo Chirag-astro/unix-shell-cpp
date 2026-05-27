@@ -875,7 +875,7 @@ void expand_variables(vector<string>& args)
                 i++;
             }
         }
-
+        if(!result.empty())
         arg = result;
     }
 }
