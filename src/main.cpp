@@ -12,6 +12,7 @@
 #include <readline/history.h>
 #include <dirent.h>
 #include<bits/stdc++.h>
+#include<cstring>
 
 using namespace std;
 
@@ -569,7 +570,12 @@ char **command_completion(
         rl_line_buffer,
         start
     );
+    string s = (rl_line_buffer);
     vector<string>v = tokenize(before_cursor);
+    setenv("COMP_LINE", rl_line_buffer, 1);
+    string val = to_string(s.size());
+
+    setenv("COMP_POINT",val.c_str(),1);
 
     current_completion_cmd = "";
     prev_arg = "";
