@@ -849,7 +849,7 @@ void expand_variables(vector<string>& args)
             {
                 i++;
                 bool braces=false;
-                if(i+1 < arg.size() && arg[i]=='{'){
+                if(i < arg.size() && arg[i]=='{'){
                   braces=true;
                   i++;
                 }
